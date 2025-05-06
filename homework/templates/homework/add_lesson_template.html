@@ -1,0 +1,45 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>授業テンプレート作成</title>
+    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
+</head>
+<body>
+    <h1>授業テンプレート作成</h1>
+
+    <!-- フォーム -->
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">テンプレートを作成</button>
+    </form>
+
+    <h2>作成済みテンプレート</h2>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+        {% for template in templates %}
+        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
+            <div style="font-size: 1.1em; margin-bottom: 5px;">
+                🎓 <strong>{{ template.get_subject_display }}</strong>
+            </div>
+            <div>
+                🏫 {{ template.get_course_display }}<br>
+                🕒 {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+            </div>
+            <div style="text-align: right; margin-top: 8px;">
+                <a href="{% url 'delete_lesson_template' template.id %}" style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                    ❌ 削除
+                </a>
+            </div>
+        </div>
+        {% empty %}
+        <p>まだテンプレートはありません。</p>
+        {% endfor %}
+    </div>
+    
+
+    <p><a href="{% url 'add_lesson' %}">← 授業登録に戻る</a></p>
+
+</body>
+</html>

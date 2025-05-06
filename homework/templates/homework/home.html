@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>宿題管理ホーム</title>
+</head>
+<body>
+    <h1>宿題管理トップページ</h1>
+    <ul>
+        <li><a href="{% url 'add_homework' %}">➕ 宿題を追加する</a></li>
+        <li><a href="{% url 'weekly_view' %}">📅 今週のカレンダーを見る</a></li>
+        <li><a href="{% url 'homework_list' %}">📋 宿題一覧を見る</a></li>
+    </ul>
+</body>
+</html>

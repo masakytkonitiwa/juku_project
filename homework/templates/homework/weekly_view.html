@@ -1,0 +1,83 @@
+{% extends 'homework/base.html' %}
+
+{% load homework_extras %}
+
+{% block title %}週間カレンダー{% endblock %}
+
+{% block content %}
+    <!-- 🔥 ここに入れる -->
+    <form method="get" action="{% url 'weekly_view' %}" style="margin-bottom: 20px;">
+        <label for="view_mode">表示形式:</label>
+        <select name="view_mode" id="view_mode" onchange="this.form.submit()">
+            <option value="3weeks" {% if view_mode == '3weeks' %}selected{% endif %}>先週・今週・来週</option>
+            <option value="month" {% if view_mode == 'month' %}selected{% endif %}>月ごと</option>
+            <option value="test" {% if view_mode == 'test' %}selected{% endif %}>次の公開学力テストまで</option>
+        </select>
+    </form>
+
+
+    <p style="margin-bottom: 20px;">
+        <a href="{% url 'add_homework' %}" style="padding: 8px 12px; background-color: #2196F3; color: white; border-radius: 4px; text-decoration: none; margin-right: 10px;">
+            ➕ 宿題を追加
+        </a>
+        <a href="{% url 'add_event' %}" style="padding: 8px 12px; background-color: #4CAF50; color: white; border-radius: 4px; text-decoration: none;">
+            ➕ イベントを追加
+        </a>
+        <a href="{% url 'add_lesson' %}" style="padding: 8px 12px; background-color: #FF9800; color: white; border-radius: 4px; text-decoration: none; margin-left: 10px;">
+            ➕ 授業を追加
+        </a>
+    </p>
+    
+    <h2>🗓️ 塾カレンダー</h2>
+
+
+    <table>
+        <!-- 日付ヘッダー -->
+        {% for week in weeks %}
+        <tr>
+            {% for day in week %}
+                <th>{{ day|date:"m月d日 (D)" }}</th>
+            {% endfor %}
+        </tr>
+    
+        <!-- 宿題・イベント -->
+        <tr>
+            {% for day in week %}
+                <td class="{% if day == today %}today{% endif %}"> 
+                    <!-- イベント -->
+                    {% for ev in events_by_day|get_item:day %}
+                        <div>📅 {{ ev.name }} <a href="{% url 'delete_event' ev.id %}" style="color:red;">❌</a></div>
+                    {% endfor %}
+
+ 
+
+                    <!-- 授業表示 -->
+                    {% for lesson in lessons_by_day|get_item:day %}
+                    <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
+                        🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                        {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
+                        <a href="{% url 'delete_lesson' lesson.id %}" style="color:red;">❌</a>  <!-- 削除ボタン追加！ -->
+                    </div>
+                    {% endfor %}
+                    
+                    <!-- 宿題 -->
+                    {% for hw_entry in homeworks_by_day|get_item:day %}
+                    <div class="homework-box subject-{{ hw_entry.detail.homework.subject }}">
+                        {{ hw_entry.detail.homework.get_subject_display }}<br>
+                        🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
+                        📋 {{ hw_entry.task }}
+                        <!-- 🔥 削除ボタン -->
+                        <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
+
+                        </form>
+                    </div>
+                    {% endfor %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+    
+    {% endblock %}

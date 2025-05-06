@@ -1,0 +1,214 @@
+/* フォント・ベースデザイン */
+body {
+    font-family: 'Noto Sans JP', 'ヒラギノ角ゴ ProN', 'メイリオ', sans-serif;
+    background-color: #f7f7f7;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container, .content {
+    width: 95%;
+    max-width: 1200px;
+    margin: auto;
+    padding: 1rem;
+}
+
+/* カレンダーテーブル */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 2rem auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #e0e0e0;
+    padding: 1rem;
+    vertical-align: top;
+    text-align: left;
+    min-height: 120px;
+}
+
+th {
+    background-color: #f5f5f5;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* 宿題・授業・イベント ボックス */
+.homework-box, .lesson-box, .event-box {
+    border-radius: 8px;
+    padding: 6px 10px;
+    margin: 5px 0;
+    font-size: 0.9rem;
+}
+
+.homework-box {
+    border-left: 4px solid #2196F3;  /* 宿題は青線 */
+    background-color: #f9f9f9;
+}
+
+.lesson-box {
+    border-left: 4px solid #FF9800;  /* 授業はオレンジ線 */
+    background-color: #fff3e0;
+}
+
+.event-box {
+    border-left: 4px solid #4CAF50;  /* イベントは緑線 */
+    background-color: #e8f5e9;
+}
+
+/* 科目別色分け */
+.subject-math { background-color: #cce5ff; }
+.subject-japanese { background-color: #ffcccc; }
+.subject-science { background-color: #d4edda; }
+.subject-social { background-color: #fff3cd; }
+.subject-english { background-color: #e2d6f3; }
+.subject-other { background-color: #eeeeee; }
+
+/* カレンダー（日にち選択） */
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 1rem;
+}
+
+.day {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    min-height: 80px;
+}
+
+.day:hover {
+    background-color: #eee;
+}
+
+.day.today {
+    background-color: #ffeb3b;  /* 今日の色（黄色） */
+    border: 2px solid #fbc02d;
+}
+
+.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* テンプレートボタン */
+.template-button {
+    display: inline-block;
+    padding: 10px 16px;
+    margin: 5px;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    background-color: white;
+    color: #4CAF50;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.template-button:hover {
+    background-color: #4CAF50;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.template-button.selected {
+    background-color: #4CAF50;
+    color: white;
+}
+
+/* 登録ボタン */
+button[type="submit"] {
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    transition: background-color 0.3s, transform 0.1s;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+}
+
+button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+td.today {
+    background-color: #ffeb3b;  /* 黄色で目立つ */
+    border: 2px solid #fbc02d;  /* 枠線もちょっと濃く */
+    font-weight: bold;  /* 文字を太字に */
+}
+
+.day.today {
+    background-color: #ffeb3b;  /* 黄色背景 */
+    border: 2px solid #fbc02d;  /* 濃い枠線 */
+    font-weight: bold;
+}
+
+.header-right {
+    display: flex;
+    justify-content: flex-end;  /* 右寄せ！ */
+    align-items: center;
+    padding: 1rem;
+    font-size: 1rem;
+}
+
+.header-right p {
+    margin: 0;
+}
+
+.back-button {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #607d8b;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #546e7a;  /* 少し濃い色に */
+}
+
+
+/* 共通ボタンデザイン */
+.subject-button, .cycle-button, .course-button, .problem-type-button, .problem-count-button {
+    padding: 12px 20px;
+    margin: 6px;
+    border: 2px solid #a5d6a7;
+    border-radius: 8px;
+    background-color: #e8f5e9;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* ホバー効果 */
+.subject-button:hover, .cycle-button:hover,
+.course-button:hover, .problem-type-button:hover, .problem-count-button:hover {
+    background-color: #c8e6c9;
+}
+
+/* 選択状態 */
+.subject-button.selected, .cycle-button.selected,
+.course-button.selected, .problem-type-button.selected, .problem-count-button.selected {
+    background-color: #43a047;
+    color: white;
+    border-color: #2e7d32;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}

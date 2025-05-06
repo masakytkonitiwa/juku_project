@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+{% load static %}
+{% load homework_extras %}
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>イベント登録</title>
+    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
+</head>
+<body>
+    <p style="text-align: right;">
+        <a href="{% url 'weekly_view' %}" class="back-button">← カレンダーに戻る</a>
+    </p>
+    <h1>イベント登録</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+
+        <p style="margin-bottom: 20px;">
+            <a href="{% url 'add_event_template' %}" style="padding: 8px 12px; background-color: #9C27B0; color: white; border-radius: 4px; text-decoration: none;">
+                ➕ イベントテンプレートを作成
+            </a>
+        </p>
+
+        <h2>イベントテンプレートを選択</h2>
+            <div>
+                {% for template in templates %}
+                <div style="display:inline-block; margin:5px;">
+                    <button type="button" class="template-button"
+                    data-name="{{ template.name }}"
+                    data-repeat="{{ template.repeat }}">
+                    📅 {{ template.name }}（{{ template.get_repeat_display }})
+                    </button>
+                </div>
+                {% empty %}
+                    <p>テンプレートがありません。</p>
+                {% endfor %}
+            </div>
+
+
+        <!-- 🆕 カレンダー選択 -->
+        <h2>イベントの日付を選択</h2>
+        <div class="calendar">
+
+
+            {% for day in calendar_days %}
+
+            
+            <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
+
+                {{ day|date:"m/d (D)" }}
+        
+                <!-- イベント表示 -->
+                {% for ev in events_by_day|get_item:day %}
+                    <div style="background-color: #e0e0e0; font-size: 0.8em; margin: 2px 0;">
+                        📅 {{ ev.name }}
+                    </div>
+                {% endfor %}
+        
+                <!-- 🏫 授業表示（ここに追加！） -->
+                {% for lesson in lessons_by_day|get_item:day %}
+                <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
+                    🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                    {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
+                </div>
+                {% endfor %}
+        
+                <!-- 📋 宿題表示（ここに追加！） -->
+                {% for hw_entry in homeworks_by_day|get_item:day %}
+                <div class="homework-box subject-{{ hw_entry.detail.homework.subject }}">
+                    {{ hw_entry.detail.homework.get_subject_display }}<br>
+                    🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
+                    📋 {{ hw_entry.task }}
+                </div>
+                {% endfor %}
+        
+            </div>
+            
+            {% if forloop.counter|divisibleby:7 and not forloop.last %}
+        </div><div class="calendar"> <!-- 週ごとに新しい行 -->
+        {% endif %}
+        {% endfor %}
+        
+        </div>
+
+        <input type="hidden" name="selected_date" id="selected_date">
+        <button type="submit" style="margin-top: 10px;">登録する</button>
+
+    </form>
+
+
+    <script>
+        const days = document.querySelectorAll('.day');
+        const selectedDateInput = document.getElementById('selected_date');
+        let selected = null;
+
+        days.forEach(day => {
+            day.addEventListener('click', () => {
+                if (selected) {
+                    selected.classList.remove('selected');
+                }
+                selected = day;
+                selected.classList.add('selected');
+                const isoDate = new Date(day.dataset.date).toISOString().split('T')[0];
+                selectedDateInput.value = isoDate;
+            });
+        });
+
+        const templateButtons = document.querySelectorAll('.template-button');
+        templateButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // 選択状態切替
+                templateButtons.forEach(btn => btn.classList.remove('selected'));
+                button.classList.add('selected');
+
+                // フォームに反映
+                const name = button.dataset.name;
+                const repeat = button.dataset.repeat;
+
+                document.getElementById('id_name').value = name;
+                document.getElementById('id_repeat').value = repeat;
+            });
+        });
+
+
+
+    </script>
+</body>
+</html>

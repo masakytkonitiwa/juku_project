@@ -1,0 +1,58 @@
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    vertical-align: top;
+}
+th {
+    background-color: #f0f0f0;
+}
+
+.subject {
+    margin-bottom: 6px;
+    padding: 4px;
+    border-radius: 4px;
+}
+.subject.math {
+    background-color: #cce5ff;
+}
+.subject.japanese {
+    background-color: #ffcccc;
+}
+.subject.science {
+    background-color: #d4edda;
+}
+.subject.social {
+    background-color: #fff3cd;
+}
+.subject.english {
+    background-color: #e2d6f3;
+}
+.subject.other {
+    background-color: #eeeeee;
+}
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7列（1週間分） */
+    gap: 8px;
+    margin-top: 1rem;
+}
+.day {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+}
+.day:hover {
+    background-color: #eee;
+}
+.selected {
+    background-color: #4CAF50;
+    color: white;
+}

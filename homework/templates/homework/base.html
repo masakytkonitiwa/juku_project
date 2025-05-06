@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}宿題管理アプリ{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
+
+
+    <!-- 🔥 ここにGoogle Fonts追加 -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+
+
+    <header class="container header-right">
+        {% if user.is_authenticated %}
+            <p>ようこそ、{{ user.username }}さん！<a href="{% url 'logout' %}">ログアウト</a></p>
+        {% else %}
+            <p><a href="{% url 'login' %}">ログイン</a> | <a href="{% url 'signup' %}">ユーザー登録</a></p>
+        {% endif %}
+    </header>
+
+    <main class="content">
+        {% block content %}
+        {% endblock %}
+    </main>
+    
+
+
+</body>
+</html>

@@ -1,0 +1,23 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ユーザー登録</title>
+    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
+</head>
+<body>
+    <div class="form-container">
+        <h1>ユーザー登録</h1>
+        <p>以下のフォームに必要事項を入力し、「登録する」をクリックしてください。</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">登録する</button>
+        </form>
+
+        <p>すでにアカウントをお持ちの方は → <a href="{% url 'login' %}">ログインはこちら</a></p>
+    </div>
+</body>
+</html>

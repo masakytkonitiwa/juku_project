@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>宿題割り振り一覧</title>
+</head>
+<body>
+    <h1>📋 宿題の割り振り一覧</h1>
+
+    {% for hw in homeworks %}
+        <h2>{{ hw.get_subject_display }}（{{ hw.planned_date }}）</h2>
+        <ul>
+        {% for detail in hw.details.all %}
+            <li>
+                {{ detail.get_course_display }} / {{ detail.get_problem_type_display }} : {{ detail.problem_count }}問
+                <br>📋 {{ detail.scheduled_task|linebreaksbr }}
+            </li>
+        {% endfor %}
+        </ul>
+    {% endfor %}
+
+    <p><a href="{% url 'weekly_view' %}">← カレンダーに戻る</a></p>
+</body>
+</html>

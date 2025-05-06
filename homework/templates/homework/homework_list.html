@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>宿題一覧</title>
+</head>
+<body>
+    <h1>登録済みの宿題一覧</h1>
+
+    <table border="1">
+        <tr>
+            <th>日付</th>
+            <th>教科</th>
+            <th>タイトル</th>
+            <th>時間</th>
+            <th>完了</th>
+        </tr>
+        {% for hw in homeworks %}
+        <tr>
+            <td>{{ hw.planned_date }}</td>
+            <td>{{ hw.get_subject_display }}</td>
+            <td>{{ hw.title }}</td>
+            <td>{{ hw.estimated_minutes }}分</td>
+            <td>{{ hw.completed|yesno:"✓,×" }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5">まだ宿題はありません</td></tr>
+        {% endfor %}
+    </table>
+
+    <p><a href="{% url 'add_homework' %}">宿題を追加する</a></p>
+</body>
+</html>
