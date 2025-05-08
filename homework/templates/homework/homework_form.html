@@ -12,7 +12,7 @@
         <a href="{% url 'weekly_view' %}" class="back-button">← カレンダーに戻る</a>
     </p>
 
-    <h1>宿題登録</h1>
+    <h1>宿題登録（①〜⑦）</h1>
 
     <form method="post">
         {% csrf_token %}
@@ -100,14 +100,14 @@
 
 
 
-        <h2>５ 周回を選択</h2>
+        <h2>⑤ 周回を選択</h2>
         <div id="cycle-buttons">
             <button type="button" class="cycle-button" data-value="1">1周＋総復習</button>
             <button type="button" class="cycle-button" data-value="2">2周＋総復習</button>
             <button type="button" class="cycle-button" data-value="3">3周＋総復習</button>
         </div>
 
-        <h2>６ 宿題をやる日を選択</h2>
+        <h2>⑥ 宿題をやる日を選択</h2>
         <div class="calendar">
             {% for day in calendar_days %}
                 <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
@@ -140,7 +140,7 @@
         </div>
 
         <p style="text-align: center; margin-top: 20px;">
-            <button type="submit">７ 登録する</button>
+            <button type="submit">⑦ 登録する</button>
         </p>
     </form>
 

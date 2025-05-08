@@ -11,12 +11,12 @@
     <p style="text-align: right;">
         <a href="{% url 'weekly_view' %}" class="back-button">← カレンダーに戻る</a>
     </p>
-    <h1>イベント登録①〜③</h1>
+    <h1>イベント登録（①〜③）</h1>
 
     <form method="post">
         {% csrf_token %}
     
-        <h2>イベントを選択①</h2>
+        <h2>①イベントを選択</h2>
         <div>
             {% for template in templates %}
             <div style="display:inline-block; margin:5px;">
@@ -39,7 +39,7 @@
 
 
         <!-- 🆕 カレンダー選択 -->
-        <h2>イベントの日付を選択②</h2>
+        <h2>②イベントの日付を選択</h2>
         <div class="calendar">
 
 
