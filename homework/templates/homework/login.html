@@ -4,12 +4,12 @@
 <head>
     <meta charset="UTF-8">
     <title>ログイン</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'homework/style.css' %}">
 </head>
 <body>
     <div class="form-container">
         <h1>ログイン</h1>
-        <p>ユーザー名とパスワードを入力してください。</p>
 
         <form method="post">
             {% csrf_token %}

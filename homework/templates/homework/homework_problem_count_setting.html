@@ -1,0 +1,17 @@
+{% extends 'homework/base.html' %}
+
+{% block content %}
+<h1>最大問題数の設定</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">保存</button>
+</form>
+
+{% if latest %}
+    <p style="margin-top: 20px;">現在の最大問題数：<strong>{{ latest.max_count }}</strong></p>
+{% endif %}
+
+<p><a href="{% url 'add_homework' %}">← 宿題登録ページに戻る</a></p>
+{% endblock %}

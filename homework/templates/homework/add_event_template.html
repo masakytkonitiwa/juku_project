@@ -16,20 +16,32 @@
         <button type="submit">テンプレートを作成</button>
     </form>
 
+    
     <h2>作成済みテンプレート</h2>
-    <ul>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
         {% for template in templates %}
-        <li>
-            📅 {{ template.name }}
+        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
+            <div style="font-size: 1.1em; margin-bottom: 5px;">
+                📅 <strong>{{ template.name }}</strong>
+            </div>
+    
             {% if template.start_time and template.end_time %}
-                {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+            <div>
+                🕒 {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+            </div>
             {% endif %}
-            <a href="{% url 'delete_event_template' template.id %}" style="color:red;">❌削除</a>
-        </li>
+    
+            <div style="text-align: right; margin-top: 8px;">
+                <a href="{% url 'delete_event_template' template.id %}" style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                    ❌ 削除
+                </a>
+            </div>
+        </div>
         {% empty %}
-        <li>まだテンプレートはありません。</li>
+        <p>まだテンプレートはありません。</p>
         {% endfor %}
-    </ul>
+    </div>
+    
 
     <p><a href="{% url 'add_event' %}">← イベント登録に戻る</a></p>
 

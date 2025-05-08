@@ -7,13 +7,63 @@
     <link rel="stylesheet" href="{% static 'homework/style.css' %}">
 </head>
 <body>
-    <h1>授業テンプレート作成</h1>
+    <h1>授業テンプレート作成①〜⑤</h1>
 
     <!-- フォーム -->
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">テンプレートを作成</button>
+
+
+        {% if form.non_field_errors %}
+            <div style="color: red; margin-bottom: 1rem;">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        <h2>①科目を選択</h2>
+            <div class="button-group">
+                {% for value, label in subject_choices %}
+                    <button type="button" class="subject-button" data-value="{{ value }}">{{ label }}</button>
+                {% endfor %}
+
+                <!-- 🔥 科目の追加ボタン -->
+                <a href="{% url 'subject_template_list' %}" class="subject-button" style="text-decoration: none;">
+                    ➕ 科目を追加・削除
+                </a>
+            </div>
+
+        <input type="hidden" name="subject" id="id_subject">
+            
+        <!-- 今後ここにコース・時間のボタンも追加します -->
+
+        <h2>②コースを選択</h2>
+        <div class="button-group">
+            {% for value, label in course_choices %}
+                {% if value %}
+                <button type="button" class="course-button" data-value="{{ value }}">{{ label }}</button>
+                {% endif %}
+            {% endfor %}
+
+            <!-- 🔥 コースの追加ボタン -->
+            <a href="{% url 'course_template_list' %}" class="course-button" style="text-decoration: none;">
+                ➕ コースを追加・削除
+            </a>
+        </div>
+
+        <input type="hidden" name="course" id="id_course">
+
+        <h2>③授業開始時刻</h2>
+        <input type="time" name="start_time" id="id_start_time" step="300" class="time-input">
+
+        <h2>④授業終了時刻</h2>
+        <input type="time" name="end_time" id="id_end_time" step="300" class="time-input">
+
+
+    
+        <button type="submit" style="margin-top: 20px;">⑤テンプレートを作成</button>
     </form>
 
     <h2>作成済みテンプレート</h2>
@@ -21,12 +71,13 @@
         {% for template in templates %}
         <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
             <div style="font-size: 1.1em; margin-bottom: 5px;">
-                🎓 <strong>{{ template.get_subject_display }}</strong>
+                🎓 <strong>{{ template.subject.name }}</strong>
             </div>
             <div>
-                🏫 {{ template.get_course_display }}<br>
+                🏫 {{ template.course.name }}<br>
                 🕒 {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
             </div>
+            
             <div style="text-align: right; margin-top: 8px;">
                 <a href="{% url 'delete_lesson_template' template.id %}" style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
                     ❌ 削除
@@ -41,5 +92,46 @@
 
     <p><a href="{% url 'add_lesson' %}">← 授業登録に戻る</a></p>
 
+
+
+    <script>
+        document.querySelectorAll('.subject-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const hiddenInput = document.getElementById('id_subject');
+
+                if (button.classList.contains('selected')) {
+                    // 選択済み → 解除
+                    button.classList.remove('selected');
+                    hiddenInput.value = '';
+                } else {
+                    // 新たに選択
+                    document.querySelectorAll('.subject-button').forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected');
+                    hiddenInput.value = button.dataset.value;
+                }
+            });
+        });
+
+
+
+
+        document.querySelectorAll('.course-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const hiddenInput = document.getElementById('id_course');
+
+                if (button.classList.contains('selected')) {
+                    // 選択解除
+                    button.classList.remove('selected');
+                    hiddenInput.value = '';
+                } else {
+                    // 新しく選択
+                    document.querySelectorAll('.course-button').forEach(b => b.classList.remove('selected'));
+                    button.classList.add('selected');
+                    hiddenInput.value = button.dataset.value;
+                }
+            });
+        });
+        </script>
+        
 </body>
 </html>

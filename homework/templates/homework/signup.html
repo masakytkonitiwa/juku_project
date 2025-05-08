@@ -4,12 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <title>ユーザー登録</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  <!-- ← 追加！ -->
     <link rel="stylesheet" href="{% static 'homework/style.css' %}">
 </head>
 <body>
     <div class="form-container">
         <h1>ユーザー登録</h1>
-        <p>以下のフォームに必要事項を入力し、「登録する」をクリックしてください。</p>
+
 
         <form method="post">
             {% csrf_token %}

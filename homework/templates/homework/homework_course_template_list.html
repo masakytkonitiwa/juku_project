@@ -1,0 +1,28 @@
+{% extends 'homework/base.html' %}
+{% block content %}
+
+<h1>宿題用 コーステンプレート追加</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">追加</button>
+</form>
+
+<h2>登録済みの宿題コース</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    {% for course in courses %}
+        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
+            {{ course.name }}
+            <a href="{% url 'delete_homework_course' course.pk %}"
+               onclick="return confirm('この宿題コースを削除しますか？')"
+               style="color: red; margin-left: 10px;">❌</a>
+        </div>
+    {% empty %}
+        <p>まだコースは登録されていません。</p>
+    {% endfor %}
+</div>
+
+<p><a href="{% url 'add_homework' %}">← 宿題登録ページに戻る</a></p>
+
+{% endblock %}

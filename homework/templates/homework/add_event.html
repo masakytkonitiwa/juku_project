@@ -11,36 +11,35 @@
     <p style="text-align: right;">
         <a href="{% url 'weekly_view' %}" class="back-button">← カレンダーに戻る</a>
     </p>
-    <h1>イベント登録</h1>
+    <h1>イベント登録①〜③</h1>
 
     <form method="post">
         {% csrf_token %}
-        {{ form.as_p }}
-
-        <p style="margin-bottom: 20px;">
-            <a href="{% url 'add_event_template' %}" style="padding: 8px 12px; background-color: #9C27B0; color: white; border-radius: 4px; text-decoration: none;">
-                ➕ イベントテンプレートを作成
-            </a>
-        </p>
-
-        <h2>イベントテンプレートを選択</h2>
-            <div>
-                {% for template in templates %}
-                <div style="display:inline-block; margin:5px;">
-                    <button type="button" class="template-button"
-                    data-name="{{ template.name }}"
-                    data-repeat="{{ template.repeat }}">
-                    📅 {{ template.name }}（{{ template.get_repeat_display }})
-                    </button>
-                </div>
-                {% empty %}
-                    <p>テンプレートがありません。</p>
-                {% endfor %}
+    
+        <h2>イベントを選択①</h2>
+        <div>
+            {% for template in templates %}
+            <div style="display:inline-block; margin:5px;">
+                <button type="button" class="template-button"
+                    data-name="{{ template.name }}">
+                    📅 {{ template.name }}
+                </button>
             </div>
+            {% empty %}
+                <p>テンプレートがありません。</p>
+            {% endfor %}
+        
+            <!-- 🔥 統一デザインの追加ボタン -->
+            <div style="display:inline-block; margin:5px;">
+                <a href="{% url 'add_event_template' %}" class="template-button" style="text-decoration: none;">
+                    ➕ イベントを新規作成or削除
+                </a>
+            </div>
+        </div>
 
 
         <!-- 🆕 カレンダー選択 -->
-        <h2>イベントの日付を選択</h2>
+        <h2>イベントの日付を選択②</h2>
         <div class="calendar">
 
 
@@ -61,7 +60,7 @@
                 <!-- 🏫 授業表示（ここに追加！） -->
                 {% for lesson in lessons_by_day|get_item:day %}
                 <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
-                    🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                    授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
                     {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
                 </div>
                 {% endfor %}
@@ -83,9 +82,10 @@
         {% endfor %}
         
         </div>
+        <input type="hidden" name="name" id="id_name">  <!-- 🔥 これを追加 -->
 
         <input type="hidden" name="selected_date" id="selected_date">
-        <button type="submit" style="margin-top: 10px;">登録する</button>
+        <button type="submit" style="margin-top: 10px;">③登録する</button>
 
     </form>
 
@@ -108,20 +108,16 @@
         });
 
         const templateButtons = document.querySelectorAll('.template-button');
-        templateButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // 選択状態切替
-                templateButtons.forEach(btn => btn.classList.remove('selected'));
-                button.classList.add('selected');
+            templateButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    templateButtons.forEach(btn => btn.classList.remove('selected'));
+                    button.classList.add('selected');
 
-                // フォームに反映
-                const name = button.dataset.name;
-                const repeat = button.dataset.repeat;
-
-                document.getElementById('id_name').value = name;
-                document.getElementById('id_repeat').value = repeat;
+                    // 🔥 name のみ反映
+                    const name = button.dataset.name;
+                    document.getElementById('id_name').value = name;
+                });
             });
-        });
 
 
 

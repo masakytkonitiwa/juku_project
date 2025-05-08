@@ -29,7 +29,7 @@
     </p>
     
     <h2>🗓️ 塾カレンダー</h2>
-
+    <div class="calendar-wrapper">
 
     <table>
         <!-- 日付ヘッダー -->
@@ -54,7 +54,7 @@
                     <!-- 授業表示 -->
                     {% for lesson in lessons_by_day|get_item:day %}
                     <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
-                        🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                        授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
                         {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
                         <a href="{% url 'delete_lesson' lesson.id %}" style="color:red;">❌</a>  <!-- 削除ボタン追加！ -->
                     </div>
@@ -79,5 +79,5 @@
         </tr>
         {% endfor %}
     </table>
-    
+    </div>
     {% endblock %}

@@ -1,0 +1,26 @@
+{% extends 'homework/base.html' %}
+{% block content %}
+<h1>宿題用 問題数上限テンプレート</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">追加</button>
+</form>
+
+<h2>登録済みの問題数</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    {% for count in counts %}
+        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
+            {{ count.value }}問
+            <a href="{% url 'delete_homework_problem_count_template' count.pk %}"
+               onclick="return confirm('この問題数を削除しますか？')"
+               style="color: red; margin-left: 10px;">❌</a>
+        </div>
+    {% empty %}
+        <p>まだ問題数テンプレートは登録されていません。</p>
+    {% endfor %}
+</div>
+
+<p><a href="{% url 'add_homework' %}">← 宿題登録ページに戻る</a></p>
+{% endblock %}

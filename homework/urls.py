@@ -8,8 +8,11 @@ from .views import summary_view  # ← 追加
 from . import views
 from .views import add_lesson_template_view, delete_lesson_template
 from django.contrib.auth import views as auth_views
-
+from . import views
 from .views import signup_view
+from django.urls import path
+from . import views
+
 
 
 urlpatterns = [
@@ -27,6 +30,9 @@ urlpatterns = [
     
     path('lesson_template/add/', add_lesson_template_view, name='add_lesson_template'),
     path('lesson_template/<int:template_id>/delete/', delete_lesson_template, name='delete_lesson_template'),
+    # homework/urls.py
+
+
 
     path('accounts/login/', auth_views.LoginView.as_view(template_name='homework/login.html'), name='login'),
     path('accounts/logout/', auth_views.LogoutView.as_view(next_page='login'), name='logout'),
@@ -35,5 +41,25 @@ urlpatterns = [
     path('event_template/add/', views.add_event_template_view, name='add_event_template'),
     path('event_template/<int:template_id>/delete/', views.delete_event_template_view, name='delete_event_template'),  # 🔥 これ追加！
 
+    path('subject/templates/', views.subject_template_list, name='subject_template_list'),
+    # homework/urls.py
+    path('subject/delete/<int:pk>/', views.delete_subject, name='delete_subject'),
+
+
+    path('course/templates/', views.course_template_list, name='course_template_list'),
+    path('course/delete/<int:pk>/', views.delete_course, name='delete_course'),
+
+
+    path('subject/templates/homework/', views.homework_subject_template_list, name='homework_subject_template_list'),
+    path('subject/templates/homework/delete/<int:pk>/', views.delete_homework_subject_template, name='delete_homework_subject_template'),
+    
+    path('course/templates/homework/', views.homework_course_template_list, name='homework_course_template_list'),
+    path('course/templates/homework/delete/<int:pk>/', views.delete_homework_course, name='delete_homework_course'),
+
+    path('problem_type/templates/', views.homework_problem_type_template_list, name='homework_problem_type_template_list'),
+    path('problem_type/templates/delete/<int:pk>/', views.delete_homework_problem_type, name='delete_homework_problem_type'),
+
+
+    path('problem_count/setting/',views.homework_problem_count_setting_view,name='homework_problem_count_setting'),
 
 ]

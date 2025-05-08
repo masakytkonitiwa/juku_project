@@ -1,15 +1,11 @@
-
 {% load static %}
 {% load homework_extras %}
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-
     <meta charset="UTF-8">
     <title>宿題登録</title>
     <link rel="stylesheet" href="{% static 'homework/style.css' %}">
-
-
 </head>
 <body>
     <p style="text-align: right;">
@@ -20,238 +16,186 @@
 
     <form method="post">
         {% csrf_token %}
-        <h2>科目を選択</h2>
-        <div id="subject-buttons" style="margin-bottom: 10px;">
-            <button type="button" class="subject-button" data-value="japanese">国語</button>
-            <button type="button" class="subject-button" data-value="math">算数</button>
-            <button type="button" class="subject-button" data-value="science">理科</button>
-            <button type="button" class="subject-button" data-value="social">社会</button>
-            <button type="button" class="subject-button" data-value="english">英語</button>
-            <button type="button" class="subject-button" data-value="other">その他</button>
-        </div>
         <input type="hidden" name="subject" id="id_subject">
-
-        <h2>コースを選択</h2>
-        <div id="course-buttons" style="margin-bottom: 10px;">
-            <button type="button" class="course-button" data-value="master">マスターコース</button>
-            <button type="button" class="course-button" data-value="top_level">最高レベル特訓</button>
-            <button type="button" class="course-button" data-value="second">2nd</button>
-        </div>
         <input type="hidden" name="course" id="id_course">
-
-        
-        <h2>問題タイプを選択</h2>
-        <div id="problem-type-buttons" style="margin-bottom: 10px;">
-            <button type="button" class="problem-type-button" data-value="practice">練習問題</button>
-            <button type="button" class="problem-type-button" data-value="b_problem">B問題</button>
-            <button type="button" class="problem-type-button" data-value="c_problem">C問題</button>
-        </div>
         <input type="hidden" name="problem_type" id="id_problem_type">
-
-
-        <h2>問題数を選択</h2>
-        <div id="problem-count-buttons" style="margin-bottom: 10px;">
-            {% for num in range_0_30 %}
-                <button type="button" class="problem-count-button" data-value="{{ num }}">{{ num }}問</button>
-            {% endfor %}
-        </div>
         <input type="hidden" name="problem_count" id="id_problem_count">
+        <input type="hidden" name="cycles" id="id_cycles">
+        <input type="hidden" name="selected_dates" id="selected_dates">
+
+        <h2>① 科目を選択</h2>
+
+        <div class="button-group" id="subject-buttons">
+            {% for template in homework_subject_templates %}
+                <button type="button" class="subject-button" data-value="{{ template.id }}">
+                    📚 {{ template.name }}
+                </button>
+            {% empty %}
+                <p>登録されている科目がありません。</p>
+            {% endfor %}
+        
+            <!-- 🔥 科目の追加ボタンも同じ見た目に -->
+            <a href="{% url 'homework_subject_template_list' %}" class="subject-button" style="text-decoration: none; display: inline-block;">
+                ➕ 科目を追加・削除
+            </a>
+        </div>
+        
+ 
+
+        <h2>② コースを選択</h2>
+
+        <div class="button-group" id="course-buttons">
+            {% for course in homework_courses %}
+                <button type="button" class="course-button" data-value="{{ course.name }}">
+                    🏫 {{ course.name }}
+                </button>
+            {% empty %}
+                <p>登録されているコースがありません。</p>
+            {% endfor %}
+        
+            <!-- 🔥 コースの追加ボタンも同じ見た目に -->
+            <a href="{% url 'homework_course_template_list' %}" class="course-button" style="text-decoration: none; display: inline-block;">
+                ➕ コースを追加・削除
+            </a>
+        </div>
+        
+        
 
 
-        <h2>周回数を選択</h2>
-        <div id="cycle-buttons" style="margin-bottom: 10px;">
-            <button type="button" class="cycle-button" data-value="1">1周のみ</button>
+
+        <h2>③ 問題タイプを選択</h2>
+
+        <div class="button-group" id="problem-type-buttons">
+            {% for pt in homework_problem_types %}
+                <button type="button" class="problem-type-button" data-value="{{ pt.name }}">
+                    📄 {{ pt.name }}
+                </button>
+            {% empty %}
+                <p>登録されている問題タイプがありません。</p>
+            {% endfor %}
+        
+            <a href="{% url 'homework_problem_type_template_list' %}" class="problem-type-button" style="text-decoration: none; display: inline-block;">
+                ➕ 問題タイプを追加・削除
+            </a>
+        </div>
+
+
+
+
+        <h2>④ 問題数を選択</h2>
+
+        <div class="button-group" id="problem-count-buttons">
+            {% for num in range_1_max %}
+                <button type="button" class="problem-count-button" data-value="{{ num }}">
+                    {{ num }}問
+                </button>
+            {% endfor %}
+        
+            <a href="{% url 'homework_problem_count_setting' %}"
+               class="problem-count-button"
+               style="text-decoration: none; display: inline-block;">
+                ➕ 最大問題数を設定
+            </a>
+        </div>
+
+
+
+        <h2>５ 周回を選択</h2>
+        <div id="cycle-buttons">
+            <button type="button" class="cycle-button" data-value="1">1周＋総復習</button>
             <button type="button" class="cycle-button" data-value="2">2周＋総復習</button>
             <button type="button" class="cycle-button" data-value="3">3周＋総復習</button>
         </div>
-        <input type="hidden" name="cycles" id="id_cycles">
 
-            <hr>
-
-    
-        <!-- 🆕 カレンダー選択 -->
-        <h2>宿題をやる日を選択</h2>
-        <input type="hidden" name="selected_dates" id="selected_dates">
-        <button type="submit">登録する</button>
-    </form>
-
+        <h2>６ 宿題をやる日を選択</h2>
         <div class="calendar">
             {% for day in calendar_days %}
-                
                 <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
-
-
                     {{ day|date:"m/d (D)" }}
-                    <!-- イベント表示 -->
+
                     {% for ev in events_by_day|get_item:day %}
-                        <div style="background-color: #e0e0e0; font-size: 0.8em; margin: 2px 0;">
-                            📅 {{ ev.name }}
-                                    <!-- 🔥 ここに削除フォーム追加 -->
-                            <form method="post" action="{% url 'delete_event' ev.id %}" style="display:inline;">
-                                {% csrf_token %}
-                                <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
-
-                            </form>
-                        </div>
+                    <div style="background-color: #e0e0e0; font-size: 0.8em;">📅 {{ ev.name }}</div>
                     {% endfor %}
 
-                    <!-- 🔥 授業表示 -->
                     {% for lesson in lessons_by_day|get_item:day %}
-                    <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
-                        🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                    <div style="background-color: #ffe0b3; font-size: 0.8em;">
+                        授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
                         {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
-
-                                <!-- 🔥 削除ボタン -->
-                        <form method="post" action="{% url 'delete_lesson' lesson.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
-
-                        </form>
                     </div>
                     {% endfor %}
 
-
-                    <!-- 宿題表示 -->
                     {% for hw_entry in homeworks_by_day|get_item:day %}
-                    <div style="background-color: #d0ebff; font-size: 0.8em; margin: 2px 0;">
+                    <div style="background-color: #d0ebff; font-size: 0.8em;">
                         {{ hw_entry.detail.homework.get_subject_display }}<br>
-                        🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
+                        宿題 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
                         📋 {{ hw_entry.task }}
-
-                        <!-- 🔥 削除ボタン -->
-                        <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
-                        </form>
+                        <button type="button" onclick="submitDeleteHomework({{ hw_entry.detail.homework.id }})" style="background: none; border: none; color: red; font-size: 0.8em; cursor: pointer;">❌</button>
                     </div>
-                {% endfor %}
+                    {% endfor %}
                 </div>
-                {% if forloop.counter|divisibleby:7 %}
-                    <div style="grid-column: 1 / -1;"></div>  <!-- 7日ごとに区切る -->
+                {% if forloop.counter|divisibleby:7 and not forloop.last %}
+                </div><div class="calendar">
                 {% endif %}
             {% endfor %}
         </div>
 
+        <p style="text-align: center; margin-top: 20px;">
+            <button type="submit">７ 登録する</button>
+        </p>
+    </form>
 
-
-
+    <!-- 削除用フォーム -->
+    <form id="delete-homework-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
 
     <script>
-
-        console.log("JS 動いてるよ");  // ✅ これを一番上に！
-
-        const subjectButtons = document.querySelectorAll('.subject-button');
-        const subjectInput = document.getElementById('id_subject');
-        console.log("subjectButtons:", subjectButtons);  // ✅ 取得できてるか？
-
-        const cycleButtons = document.querySelectorAll('.cycle-button');
-        const cycleInput = document.getElementById('id_cycles');
-        console.log("cycleButtons:", cycleButtons);  // ✅ 取得できてるか？
-
         const days = document.querySelectorAll('.day');
         const selectedDatesInput = document.getElementById('selected_dates');
         const selectedDates = new Set();
-    
+
         days.forEach(day => {
             day.addEventListener('click', () => {
-                const dateStr = day.dataset.date;
-                const isoDate = new Date(dateStr).toISOString().split('T')[0];  // ここで ISO形式に変換！
-                if (selectedDates.has(isoDate)) {
-                    selectedDates.delete(isoDate);
+                const iso = new Date(day.dataset.date).toISOString().split('T')[0];
+                if (selectedDates.has(iso)) {
+                    selectedDates.delete(iso);
                     day.classList.remove('selected');
                 } else {
-                    selectedDates.add(isoDate);
+                    selectedDates.add(iso);
                     day.classList.add('selected');
                 }
                 selectedDatesInput.value = Array.from(selectedDates).join(',');
             });
         });
 
-
-
-        // 科目選択
-        subjectButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (button.classList.contains('selected')) {
-                    // もう一度押したら選択解除
-                    button.classList.remove('selected');
-                    subjectInput.value = '';
-                } else {
-                    // 他のボタンの選択解除
-                    subjectButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    subjectInput.value = button.dataset.value;
-                }
+        function setupToggleButtons(buttons, inputId) {
+            const input = document.getElementById(inputId);
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (button.classList.contains('selected')) {
+                        button.classList.remove('selected');
+                        input.value = '';
+                    } else {
+                        buttons.forEach(btn => btn.classList.remove('selected'));
+                        button.classList.add('selected');
+                        input.value = button.dataset.value;
+                    }
+                });
             });
-        });
+        }
 
-        // 周回数選択（同じ流れ）
-        cycleButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (button.classList.contains('selected')) {
-                    button.classList.remove('selected');
-                    cycleInput.value = '';
-                } else {
-                    cycleButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    cycleInput.value = button.dataset.value;
-                }
-            });
-        });
+        setupToggleButtons(document.querySelectorAll('.subject-button'), 'id_subject');
+        setupToggleButtons(document.querySelectorAll('.course-button'), 'id_course');
+        setupToggleButtons(document.querySelectorAll('.problem-type-button'), 'id_problem_type');
+        setupToggleButtons(document.querySelectorAll('.problem-count-button'), 'id_problem_count');
+        setupToggleButtons(document.querySelectorAll('.cycle-button'), 'id_cycles');
 
-
-
-        // コース選択
-        const courseButtons = document.querySelectorAll('.course-button');
-        const courseInput = document.getElementById('id_course');
-        courseButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (button.classList.contains('selected')) {
-                    button.classList.remove('selected');
-                    courseInput.value = '';
-                } else {
-                    courseButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    courseInput.value = button.dataset.value;
-                }
-            });
-        });
-
-        // 問題タイプ選択
-        const problemTypeButtons = document.querySelectorAll('.problem-type-button');
-        const problemTypeInput = document.getElementById('id_problem_type');
-        problemTypeButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (button.classList.contains('selected')) {
-                    button.classList.remove('selected');
-                    problemTypeInput.value = '';
-                } else {
-                    problemTypeButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    problemTypeInput.value = button.dataset.value;
-                }
-            });
-        });
-
-        // 問題数選択
-        const problemCountButtons = document.querySelectorAll('.problem-count-button');
-        const problemCountInput = document.getElementById('id_problem_count');
-        problemCountButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                if (button.classList.contains('selected')) {
-                    button.classList.remove('selected');
-                    problemCountInput.value = '';
-                } else {
-                    problemCountButtons.forEach(btn => btn.classList.remove('selected'));
-                    button.classList.add('selected');
-                    problemCountInput.value = button.dataset.value;
-                }
-            });
-        });
-
-
-
+        function submitDeleteHomework(id) {
+            if (!confirm('この宿題を削除しますか？')) return;
+            const form = document.getElementById('delete-homework-form');
+            form.action = `/homework/delete/${id}/`;
+            form.submit();
+        }
     </script>
-    
 </body>
 </html>

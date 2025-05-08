@@ -1,0 +1,35 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+
+{% block content %}
+<h1>科目テンプレート追加</h1>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">追加</button>
+</form>
+
+
+<h2>登録済みの科目</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    {% for subject in subjects %}
+        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
+            <div style="font-size: 1.1em;">
+                📘 {{ subject.name }}
+            </div>
+            <div style="text-align: right; margin-top: 8px;">
+                <a href="{% url 'delete_subject' subject.pk %}" 
+                   onclick="return confirm('この科目を削除しますか？')" 
+                   style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                    ❌ 削除
+                </a>
+            </div>
+        </div>
+    {% empty %}
+        <p>まだ科目は登録されていません。</p>
+    {% endfor %}
+</div>
+
+<p><a href="{% url 'add_lesson_template' %}">← 授業テンプレート作成に戻る</a></p>
+{% endblock %}

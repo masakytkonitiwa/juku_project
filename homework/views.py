@@ -12,48 +12,17 @@ from .models import Lesson
 from django.shortcuts import redirect
 from .models import Homework, HomeworkDetail  # ← HomeworkDetail を追加！
 from .models import LessonTemplate
-
+from .models import Subject
 from django.shortcuts import get_object_or_404
-
+from .models import HomeworkSubjectTemplate  # ← ファイルの先頭に追加
+from .models import HomeworkCourse  # ← 追加
+from .models import HomeworkProblemType  # ← 忘れずに追加！
+from .models import HomeworkProblemCountSetting 
 
 def home_view(request):
     return render(request, 'homework/home.html')
 
 
-def homework_create_view(request):
-    import datetime
-    from collections import defaultdict
-
-    # 📅 カレンダーデータ作成（POSTでもGETでも必要）
-
-    today = datetime.date.today()
-    week_start = today - datetime.timedelta(days=today.weekday())
-    start_date = week_start - datetime.timedelta(weeks=1)  # 先週の月曜
-
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]  # 先週〜来週まで
-    
-    # 授業データ追加
-    lessons_by_day = defaultdict(list)
-    for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
-        lessons_by_day[lesson.date].append(lesson)
-
-    # 🔥 宿題データを HomeworkDetail から取得
-    homeworks_by_day = defaultdict(list)
-    for detail in HomeworkDetail.objects.all():
-        if detail.scheduled_task:
-            for line in detail.scheduled_task.splitlines():
-                if ": " in line:  # ← ここ！
-                    day_str, task = line.split(": ", 1)
-                    day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
-                    if calendar_days[0] <= day <= calendar_days[-1]:
-                        homeworks_by_day[day].append({'detail': detail, 'task': task})
-
-    # イベントデータ
-    events_by_day = defaultdict(list)
-    for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
-        events_by_day[ev.date].append(ev)
-
-    # 📝 フォーム処理
 
 def homework_create_view(request):
     import datetime
@@ -64,6 +33,10 @@ def homework_create_view(request):
     week_start = today - datetime.timedelta(days=today.weekday())
     start_date = week_start - datetime.timedelta(weeks=1)
     calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]
+
+    # 📌 最大問題数の設定を取得（デフォルトは30）
+    latest_setting = HomeworkProblemCountSetting.objects.last()
+    max_count = latest_setting.max_count if latest_setting else 30
     
     # 授業・宿題・イベントデータ
     lessons_by_day = defaultdict(list)
@@ -105,9 +78,23 @@ def homework_create_view(request):
                 if date
             ]
         
+            # ✅ ここに配置（form.is_valid() の直後）
+        print('form.is_valid:', form.is_valid())
+        
+        
+        print('form.errors:', form.errors)
+        print('subject:', subject)
+        print('cycles:', cycles)
+        print('course:', course)
+        print('problem_type:', problem_type)
+        print('problem_count:', problem_count)
+        print('selected_dates:', selected_dates)
+            
         # 🔥 バリデーション
         if form.is_valid() and subject and cycles and course and problem_type and problem_count and selected_dates:
-            homework = form.save()
+            homework = form.save(commit=False)
+            homework.subject = HomeworkSubjectTemplate.objects.get(id=subject)
+            homework.save()
             
             detail = HomeworkDetail(
                 homework=homework,
@@ -121,7 +108,7 @@ def homework_create_view(request):
             detail.scheduled_task = scheduled_summary
             detail.save()
 
-            return redirect('weekly_view')
+            return redirect('add_homework')
     else:
         form = HomeworkForm()  # GET時だけフォーム作成
 
@@ -133,7 +120,11 @@ def homework_create_view(request):
         'events_by_day': events_by_day,
         'lessons_by_day': lessons_by_day,
         'today': today,
-        'range_0_30': range(0, 31),
+        'range_1_max': range(1, max_count + 1),  # ✅ 新たに追加
+        'homework_subject_templates': HomeworkSubjectTemplate.objects.all(),  
+        'homework_courses': HomeworkCourse.objects.all(),  # ← これを追加
+        'homework_problem_types': HomeworkProblemType.objects.all(), 
+
     })
 
 
@@ -258,35 +249,28 @@ def get_second_sunday(year, month):
 
 
 
+from django.shortcuts import render, redirect
+from .models import Event, EventTemplate
+import datetime
+from collections import defaultdict
+from .models import Lesson, HomeworkDetail
+
 def add_event_view(request):
-    import datetime
-    from collections import defaultdict
-    from .models import Lesson, HomeworkDetail, Event  # モデル読み込み
-    from .models import EventTemplate
-
-    # 📅 カレンダーデータ作成
-
-
     today = datetime.date.today()
-    week_start = today - datetime.timedelta(days=today.weekday())  # 今週の月曜
-    start_date = week_start - datetime.timedelta(weeks=1)  # 先週の月曜
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]  # 先週〜来週
+    week_start = today - datetime.timedelta(days=today.weekday())
+    start_date = week_start - datetime.timedelta(weeks=1)
+    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]
 
-    # 🔥 ここを追加！（ユーザーごとのテンプレート取得）
     templates = EventTemplate.objects.filter(user=request.user)
 
-
-    # 📅 イベントデータ
     events_by_day = defaultdict(list)
     for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
         events_by_day[ev.date].append(ev)
 
-    # 🏫 授業データ
     lessons_by_day = defaultdict(list)
     for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
         lessons_by_day[lesson.date].append(lesson)
 
-    # 📋 宿題データ
     homeworks_by_day = defaultdict(list)
     for detail in HomeworkDetail.objects.all():
         if detail.scheduled_task:
@@ -297,28 +281,25 @@ def add_event_view(request):
                     if calendar_days[0] <= day <= calendar_days[-1]:
                         homeworks_by_day[day].append({'detail': detail, 'task': task})
 
-    # フォーム処理
+    # 🔥 POST処理
     if request.method == 'POST':
-        form = EventForm(request.POST)
+        name = request.POST.get('name')
         selected_date = request.POST.get('selected_date')
-        if selected_date:
-            form.instance.date = selected_date
+        if name and selected_date:
+            Event.objects.create(
+                user=request.user,
+                name=name,
+                date=selected_date
+            )
+            return redirect('add_event')
 
-        if form.is_valid():
-            form.save()
-            return redirect('weekly_view')
-    else:
-        form = EventForm()
-
-    # 🔥 授業・宿題データも渡す
     return render(request, 'homework/add_event.html', {
-        'form': form,
         'calendar_days': calendar_days,
         'events_by_day': events_by_day,
-        'lessons_by_day': lessons_by_day,  # ← 追加！
-        'homeworks_by_day': homeworks_by_day,  # ← 追加！
-        'today': today,  # 🔥 追加！
-        'templates': templates,  # 🔥 テンプレートを渡す！
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+        'today': today,
+        'templates': templates,
     })
 
 
@@ -497,7 +478,7 @@ def add_lesson_view(request):
                 lesson.save()
                 print("登録された授業:", lesson.subject, lesson.date)
                 
-            return redirect('weekly_view')
+            return redirect('add_lesson')
     else:
         form = LessonForm()
 
@@ -514,7 +495,7 @@ def add_lesson_view(request):
 def delete_lesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, id=lesson_id)
     lesson.delete()
-    return redirect('weekly_view')
+    return redirect('add_lesson')
 
 
 
@@ -536,10 +517,15 @@ def add_lesson_template_view(request):
             return redirect('add_lesson_template')
     else:
         form = LessonTemplateForm()
+    # 🔽 追加：subject の選択肢を取得してテンプレートに渡す
+    subject_choices = Subject.objects.filter(user=request.user).values_list('id', 'name')
+    course_choices = form.fields['course'].choices  # ←★ 追加！
 
     return render(request, 'homework/add_lesson_template.html', {
         'form': form,
         'templates': templates,  # 一覧も渡す
+        'subject_choices': subject_choices,  # 🔥追加！
+        'course_choices': course_choices,  # ←★ 追加！
     })
 
 from django.shortcuts import get_object_or_404, redirect
@@ -609,3 +595,162 @@ def delete_event_template_view(request, template_id):
     template.delete()
     return redirect('add_event_template')
 
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from .models import Subject
+from .forms import SubjectForm
+
+@login_required
+def subject_template_list(request):
+    subjects = Subject.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        form = SubjectForm(request.POST)
+        if form.is_valid():
+            subject = form.save(commit=False)
+            subject.user = request.user
+            subject.save()
+            return redirect('subject_template_list')
+    else:
+        form = SubjectForm()
+
+    return render(request, 'homework/subject_template_list.html', {
+        'form': form,
+        'subjects': subjects
+    })
+    
+    
+from .models import Course
+from .forms import CourseForm  # このフォームは後で作成します
+
+@login_required
+def course_template_list(request):
+    courses = Course.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            course = form.save(commit=False)
+            course.user = request.user
+            course.save()
+            return redirect('course_template_list')
+    else:
+        form = CourseForm()
+
+    return render(request, 'homework/course_template_list.html', {
+        'form': form,
+        'courses': courses
+    })
+    
+@login_required
+def delete_subject(request, pk):
+    subject = get_object_or_404(Subject, pk=pk, user=request.user)
+    subject.delete()
+    return redirect('subject_template_list')
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Course
+
+@login_required
+def delete_course(request, pk):
+    course = get_object_or_404(Course, pk=pk, user=request.user)
+    course.delete()
+    return redirect('course_template_list')
+
+# homework/views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import HomeworkSubjectTemplate
+from .forms import HomeworkSubjectTemplateForm  # 🔥 追加
+
+def homework_subject_template_list(request):
+    templates = HomeworkSubjectTemplate.objects.all()
+
+    if request.method == 'POST':
+        form = HomeworkSubjectTemplateForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('homework_subject_template_list')
+    else:
+        form = HomeworkSubjectTemplateForm()
+
+    return render(request, 'homework/homework_subject_template_list.html', {
+        'form': form,
+        'subjects': templates,
+    })
+
+
+def delete_homework_subject_template(request, pk):
+    subject = get_object_or_404(HomeworkSubjectTemplate, pk=pk)
+    subject.delete()
+    return redirect('homework_subject_template_list')
+
+
+from .models import HomeworkCourse
+from .forms import HomeworkCourseForm
+
+def homework_course_template_list(request):
+    courses = HomeworkCourse.objects.all()
+
+    if request.method == 'POST':
+        form = HomeworkCourseForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('homework_course_template_list')
+    else:
+        form = HomeworkCourseForm()
+
+    return render(request, 'homework/homework_course_template_list.html', {
+        'form': form,
+        'courses': courses
+    })
+
+
+def delete_homework_course(request, pk):
+    course = get_object_or_404(HomeworkCourse, pk=pk)
+    course.delete()
+    return redirect('homework_course_template_list')
+
+
+from .models import HomeworkProblemType
+from .forms import HomeworkProblemTypeForm
+
+def homework_problem_type_template_list(request):
+    types = HomeworkProblemType.objects.all()
+
+    if request.method == 'POST':
+        form = HomeworkProblemTypeForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('homework_problem_type_template_list')
+    else:
+        form = HomeworkProblemTypeForm()
+
+    return render(request, 'homework/homework_problem_type_template_list.html', {
+        'form': form,
+        'problem_types': types,
+    })
+
+def delete_homework_problem_type(request, pk):
+    type_obj = get_object_or_404(HomeworkProblemType, pk=pk)
+    type_obj.delete()
+    return redirect('homework_problem_type_template_list')
+
+
+from .models import HomeworkProblemCountSetting
+from .forms import HomeworkProblemCountSettingForm
+
+def homework_problem_count_setting_view(request):
+    latest = HomeworkProblemCountSetting.objects.last()
+
+    if request.method == 'POST':
+        form = HomeworkProblemCountSettingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('homework_problem_count_setting')
+    else:
+        form = HomeworkProblemCountSettingForm()
+
+    return render(request, 'homework/homework_problem_count_setting.html', {
+        'form': form,
+        'latest': latest,
+    })

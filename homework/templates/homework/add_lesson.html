@@ -11,7 +11,7 @@
     <p style="text-align: right;">
         <a href="{% url 'weekly_view' %}" class="back-button">← カレンダーに戻る</a>
     </p>
-    <h1>授業登録</h1>
+    <h1>授業登録(①〜③)</h1>
 
     <form method="post" onsubmit="console.log('フォーム送信されました！');">
         {% csrf_token %}
@@ -21,34 +21,36 @@
         <input type="hidden" name="course" id="id_course">
         <input type="hidden" name="start_time" id="id_start_time">
         <input type="hidden" name="end_time" id="id_end_time">
-    
-        <p style="margin-bottom: 20px;">
-            <a href="{% url 'add_lesson_template' %}" style="padding: 8px 12px; background-color: #9C27B0; color: white; border-radius: 4px; text-decoration: none;">
-                ➕ 授業を新規作成or削除
-            </a>
-        </p>
-        <h2>授業を選択</h2>
+
+        
+        <h2>①授業を選択</h2>
         <div>
             {% for template in templates %}
             <div style="display:inline-block; margin:5px;">
                 <button type="button" class="template-button"
-                data-subject="{{ template.subject }}"
-                data-course="{{ template.course }}"
-                data-start="{{ template.start_time }}"
-                data-end="{{ template.end_time }}">
-                🎓 {{ template.get_subject_display }} / {{ template.get_course_display }}
-                {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
-            </button>
+                    data-subject="{{ template.subject.id }}"
+                    data-course="{{ template.course.id }}"
+                    data-start="{{ template.start_time }}"
+                    data-end="{{ template.end_time }}">
+                    🎓 {{ template.subject.name }} / {{ template.course.name }}
+                    {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+                </button>
             
-
             </div>
-            
             {% empty %}
                 <p>テンプレートがありません。</p>
             {% endfor %}
+        
+            <!-- 🔥 この部分を追加！ -->
+            <div style="display:inline-block; margin:5px;">
+                <a href="{% url 'add_lesson_template' %}" class="template-button" style="text-decoration: none;">
+                    ➕ 授業を新規作成or削除
+                </a>
+            </div>
         </div>
         
-        <h2>授業の日にちを選択(複数日選べます)</h2>
+        
+        <h2>②追加したい授業の日付をクリック(複数日選べます)</h2>
         
         
         <div class="calendar">
@@ -68,8 +70,17 @@
                     <!-- 🔥 授業表示 -->
                     {% for lesson in lessons_by_day|get_item:day %}
                     <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
-                        🎓 {{ lesson.get_subject_display }} / {{ lesson.get_course_display }}
+                        授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
                         {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
+
+
+                        <!-- ❌ JavaScriptで削除 -->
+                        <button type="button"
+                            onclick="submitDeleteLesson({{ lesson.id }})"
+                            style="background: none; border: none; color: red; cursor: pointer; font-size: 0.8em; padding: 0;">
+                            ❌
+                        </button>
+
                     </div>
                     {% endfor %}
 
@@ -101,10 +112,14 @@
             </div>
         {% endif %}
         
-        <button type="submit" style="margin-top: 10px;">登録する</button>
+        <button type="submit" style="margin-top: 10px;">③登録する</button>
 
     </form>
 
+    <!-- 🔥 JS用の隠れ削除フォーム -->
+    <form id="delete-lesson-form" method="post" style="display: none;">
+        {% csrf_token %}
+    </form>
 
 
     <script>
@@ -147,6 +162,15 @@
                 document.getElementById('id_end_time').value = end;
             });
         });
+
+        function submitDeleteLesson(lessonId) {
+            if (!confirm('この授業を削除しますか？')) return;
+
+            const form = document.getElementById('delete-lesson-form');
+
+            form.action = `/homework/lesson/delete/${lessonId}/`;  // ← 修正済み
+            form.submit();
+        }
 
     </script>
 </body>
