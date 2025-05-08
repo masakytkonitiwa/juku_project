@@ -100,20 +100,26 @@
   {% endfor %}
 </div>
 
+
+
 <!-- 🖥️ テーブル表示（PC用） -->
 {% if view_mode != 'div' %}
 <h2 class="text-3xl font-bold mb-4">🗓️ 塾カレンダー（{{ view_mode }}）</h2>
 <div class="calendar-wrapper">
   <table>
+    <!-- 曜日行 -->
+    <tr>
+      {% for day in weeks.0 %}
+      <th>{{ day|date:"D" }}</th>  <!-- D = 曜日（例: 月, 火） -->
+      {% endfor %}
+    </tr>
+    <!-- 日付 + 内容行 -->
     {% for week in weeks %}
     <tr>
       {% for day in week %}
-      <th>{{ day|date:"m月d日 (D)" }}</th>
-      {% endfor %}
-    </tr>
-    <tr>
-      {% for day in week %}
       <td class="{% if day == today %}today{% endif %}">
+        <div class="font-bold mb-1">{{ day|date:"m/d" }}</div>
+
         {% for ev in events_by_day|get_item:day %}
           <div>📅 {{ ev.name }} <a href="{% url 'delete_event' ev.id %}" style="color:red;">❌</a></div>
         {% endfor %}
@@ -144,6 +150,7 @@
   </table>
 </div>
 {% endif %}
+
 
 </div>
 {% endblock %}
