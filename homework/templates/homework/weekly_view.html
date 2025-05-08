@@ -6,36 +6,12 @@
 {% block content %}
 <div class="text-3xl">
 
-<!-- 🔁 表示形式切り替え -->
-<form method="get" action="{% url 'weekly_view' %}" class="mb-6">
-  <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2">
-    <button type="submit" name="view_mode" value="3weeks"
-            class="min-w-fit px-3 py-2 rounded-xl text-3xl font-medium whitespace-nowrap
-                   {% if view_mode == '3weeks' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-      📅 3週間表示
-    </button>
-    <button type="submit" name="view_mode" value="month"
-            class="min-w-fit px-3 py-2 rounded-xl text-3xl font-medium whitespace-nowrap
-                   {% if view_mode == 'month' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-      🗓️ 月ごと表示
-    </button>
-    <button type="submit" name="view_mode" value="test"
-            class="min-w-fit px-3 py-2 rounded-xl text-3xl font-medium whitespace-nowrap
-                   {% if view_mode == 'test' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-      📝 テストまで表示
-    </button>
-    <button type="submit" name="view_mode" value="div"
-            class="min-w-fit px-3 py-2 rounded-xl text-3xl font-medium whitespace-nowrap
-                   {% if view_mode == 'div' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-      📱 スマホ表示
-    </button>
-  </div>
-</form>
 
 
 
 <!-- 📱 スマホ用 縦表示 -->
-
+<!-- 🔼 上部余白を追加 -->
+<div class="mt-40"></div>
 <div class="flex flex-col gap-4">
   {% for day in week_days %}
   <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
@@ -138,14 +114,14 @@
 {% endif %}
 
     <!-- 最後の余白 -->
-    <div class="h-64"></div>
+    <div class="h-120"></div>
 </div>
 
 <!-- 📌 フローティング「＋」＋ メニュー -->
 <div class="fixed bottom-6 right-6 z-50 text-right">
     <!-- ＋ ボタン -->
     <button onclick="toggleFabMenu()"
-        class="w-28 h-28 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
+        class="w-36 h-36 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
     ＋
     </button>
 
@@ -154,15 +130,15 @@
         <!-- 🔽 メニュー（最初は非表示） -->
         <div id="fab-menu" class="hidden mt-3 space-y-4">
             <a href="{% url 'add_homework' %}"
-               class="block bg-green-500 hover:bg-green-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+               class="block bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
               ➕ 宿題を追加
             </a>
             <a href="{% url 'add_event' %}"
-               class="block bg-yellow-500 hover:bg-yellow-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+               class="block bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
               🗓️ イベントを追加
             </a>
             <a href="{% url 'add_lesson' %}"
-               class="block bg-red-500 hover:bg-red-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+               class="block bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
               📚 授業を追加
             </a>
           </div>
@@ -170,11 +146,72 @@
   </div>
 
 
+
+
+<!-- 📅 表示切替 FAB（左上） -->
+
+<div class="fixed top-6 left-6 z-50 text-left">
+    <!-- ボタン本体 -->
+    <button onclick="toggleViewMenu()"
+        class="w-36 h-36 rounded-full bg-purple-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-purple-600">
+            ≡
+    </button>
+  
+    <!-- 🔽 メニュー -->
+    <div id="view-menu" class="hidden mt-3 space-y-4">
+      <form method="get" action="{% url 'weekly_view' %}">
+        <input type="hidden" name="view_mode" value="3weeks">
+
+
+
+        <button type="submit"
+                style="font-size: 5rem;"
+                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-9xl font-bold px-6 py-4 rounded-lg shadow">
+          📅 3週間
+        </button>
+      </form>
+      <form method="get" action="{% url 'weekly_view' %}">
+        <input type="hidden" name="view_mode" value="month">
+        <button type="submit"
+                style="font-size: 5rem;"
+                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+          🗓️ 月表示
+        </button>
+      </form>
+
+      <form method="get" action="{% url 'weekly_view' %}">
+        <input type="hidden" name="view_mode" value="test">
+        <button type="submit"
+                style="font-size: 5rem;"
+                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+          📝 テストまで
+        </button>
+      </form>
+      <form method="get" action="{% url 'weekly_view' %}">
+        <input type="hidden" name="view_mode" value="div">
+        <button type="submit"
+                style="font-size: 5rem;"
+                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+          📱 スマホ
+        </button>
+      </form>
+    </div>
+  </div>
+
+  
+
+
 <script>
     function toggleFabMenu() {
       const menu = document.getElementById('fab-menu');
       menu.classList.toggle('hidden');
     }
+
+    function toggleViewMenu() {
+    const menu = document.getElementById('view-menu');
+    menu.classList.toggle('hidden');
+  }
+
   </script>
 
 {% endblock %}
