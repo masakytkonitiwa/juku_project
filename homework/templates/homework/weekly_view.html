@@ -4,7 +4,7 @@
 {% block title %}週間カレンダー{% endblock %}
 
 {% block content %}
-
+<div class="text-base">
 
 <form method="get" action="{% url 'weekly_view' %}" class="mb-6">
 
@@ -148,4 +148,6 @@
     </table>
 </div>
 {% endif %}
+</div>
+
 {% endblock %}
