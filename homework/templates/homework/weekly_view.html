@@ -32,21 +32,7 @@
   </div>
 </form>
 
-<!-- ➕ 各登録ボタン -->
-<div class="mb-4 w-full flex flex-col gap-3">
-  <a href="{% url 'add_homework' %}"
-     class="w-full bg-green-500 hover:bg-blue-600 text-white font-semibold text-3xl py-3 px-5 rounded-2xl shadow text-center">
-      ➕ 宿題を追加
-  </a>
-  <a href="{% url 'add_event' %}"
-     class="w-full bg-green-500 hover:bg-blue-600 text-white font-semibold text-3xl py-3 px-5 rounded-2xl shadow text-center">
-      ➕ イベントを追加
-  </a>
-  <a href="{% url 'add_lesson' %}"
-     class="w-full bg-green-500 hover:bg-blue-600 text-white font-bold text-3xl py-3 px-5 rounded-2xl shadow text-center border border-orange-700">
-      ➕ 授業を追加
-  </a>
-</div>
+
 
 <!-- 📱 スマホ用 縦表示 -->
 
@@ -152,29 +138,34 @@
 {% endif %}
 
     <!-- 最後の余白 -->
-    <div class="h-32"></div>
+    <div class="h-64"></div>
 </div>
 
 <!-- 📌 フローティング「＋」＋ メニュー -->
 <div class="fixed bottom-6 right-6 z-50 text-right">
     <!-- ＋ ボタン -->
     <button onclick="toggleFabMenu()"
-            class="w-14 h-14 rounded-full bg-blue-500 text-white text-3xl shadow-lg flex items-center justify-center hover:bg-blue-600">
-      ＋
+        class="w-28 h-28 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
+    ＋
     </button>
+
   
     <!-- 🔽 メニュー（最初は非表示） -->
-    <div id="fab-menu" class="hidden mt-3 space-y-2">
-      <a href="{% url 'add_homework' %}" class="block bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
-        ➕ 宿題を追加
-      </a>
-      <a href="{% url 'add_event' %}" class="block bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg shadow">
-        🗓️ イベントを追加
-      </a>
-      <a href="{% url 'add_lesson' %}" class="block bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow">
-        📚 授業を追加
-      </a>
-    </div>
+        <!-- 🔽 メニュー（最初は非表示） -->
+        <div id="fab-menu" class="hidden mt-3 space-y-4">
+            <a href="{% url 'add_homework' %}"
+               class="block bg-green-500 hover:bg-green-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+              ➕ 宿題を追加
+            </a>
+            <a href="{% url 'add_event' %}"
+               class="block bg-yellow-500 hover:bg-yellow-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+              🗓️ イベントを追加
+            </a>
+            <a href="{% url 'add_lesson' %}"
+               class="block bg-red-500 hover:bg-red-600 text-white text-3xl font-bold px-6 py-4 rounded-xl shadow-lg">
+              📚 授業を追加
+            </a>
+          </div>
 
   </div>
 
