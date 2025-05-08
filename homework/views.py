@@ -128,64 +128,82 @@ def homework_create_view(request):
     })
 
 
+from django.utils import timezone
+
+
+from django.shortcuts import render
+from django.utils import timezone
+from collections import defaultdict
+from datetime import datetime, timedelta, date
+from .models import HomeworkDetail, Lesson, Event
+
+def get_second_sunday(year, month):
+    d = date(year, month, 1)
+    sundays = []
+    while d.month == month:
+        if d.weekday() == 6:  # Sunday
+            sundays.append(d)
+        d += timedelta(days=1)
+    return sundays[1] if len(sundays) > 1 else sundays[0]
 
 def weekly_view(request):
-    import datetime
-    from collections import defaultdict
-
-    today = datetime.date.today()
-    view_mode = request.GET.get('view_mode', '3weeks')  # デフォルトは3週間
-    view_mode = request.GET.get('view_mode', '3weeks')  # デフォルトは3weeks
+    today = date.today()
+    view_mode = request.GET.get('view_mode', '3weeks')
     print("選択された表示形式:", view_mode)
 
+    # ✅ 表示範囲を決定（start_date / end_date）
     if view_mode == '3weeks':
-        week_start = today - datetime.timedelta(days=today.weekday())  # 今週の月曜
-        start_date = week_start - datetime.timedelta(weeks=1)  # 先週の月曜
-        end_date = start_date + datetime.timedelta(days=20)  # 3週間（21日間）
+        week_start = today - timedelta(days=today.weekday())
+        start_date = week_start - timedelta(weeks=1)
+        end_date = start_date + timedelta(days=20)
 
     elif view_mode == 'month':
         start_date = today.replace(day=1)
-        # 月初が月曜じゃなければ、前の月曜に戻す
-        weekday = start_date.weekday()
-        if weekday != 0:
-            start_date -= datetime.timedelta(days=weekday)
-
-        # 月末
+        if start_date.weekday() != 0:
+            start_date -= timedelta(days=start_date.weekday())
         next_month = (today.month % 12) + 1
         next_month_year = today.year + (today.month // 12)
-        end_date = datetime.date(next_month_year, next_month, 1) - datetime.timedelta(days=1)
-        # 月末が日曜じゃなければ、次の日曜まで延ばす
-        weekday = end_date.weekday()
-        if weekday != 6:
-            end_date += datetime.timedelta(days=(6 - weekday))
+        end_date = date(next_month_year, next_month, 1) - timedelta(days=1)
+        if end_date.weekday() != 6:
+            end_date += timedelta(days=(6 - end_date.weekday()))
 
     elif view_mode == 'test':
-        # 第二日曜まで
-        month = today.month
-        year = today.year
+        year, month = today.year, today.month
         second_sunday = get_second_sunday(year, month)
         if today > second_sunday:
-            # 翌月の第二日曜日
             month += 1
             if month > 12:
                 month = 1
                 year += 1
             second_sunday = get_second_sunday(year, month)
         start_date = today
-        # スタートを月曜始まりに戻す
-        weekday = start_date.weekday()
-        if weekday != 0:
-            start_date -= datetime.timedelta(days=weekday)
+        if start_date.weekday() != 0:
+            start_date -= timedelta(days=start_date.weekday())
         end_date = second_sunday
-        
+
+    elif view_mode == 'div':
+        monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
+        week_days = [monday + timedelta(days=i) for i in range(7)]
+        start_date = monday
+        end_date = monday + timedelta(days=6)
+    else:
+        # fallback
+        start_date = today
+        end_date = today + timedelta(days=6)
+        week_days = []
+
     print("カレンダー表示範囲:", start_date, "〜", end_date)
 
-
-    # 日付リスト
-    days = [start_date + datetime.timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+    # 📅 共通の週・日付リスト
+    days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
     weeks = [days[i:i+7] for i in range(0, len(days), 7)]
-    
 
+    # div 表示用の week_days（今週の7日間）
+    if view_mode == 'div':
+        monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
+        week_days = [monday + timedelta(days=i) for i in range(7)]
+    else:
+        week_days = []
 
     # 授業データ
     lessons_by_day = defaultdict(list)
@@ -194,27 +212,27 @@ def weekly_view(request):
 
     # 宿題データ
     homeworks_by_day = defaultdict(list)
-    details = HomeworkDetail.objects.all()
-    for detail in details:
+    for detail in HomeworkDetail.objects.all():
         if detail.scheduled_task:
-            for line in detail.scheduled_task.split('\n'):
+            for line in detail.scheduled_task.splitlines():
                 if ':' in line:
-                    day_str, task = line.split(':', 1)
                     try:
-                        day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                        day_str, task = line.split(':', 1)
+                        day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
                         if start_date <= day <= end_date:
                             homeworks_by_day[day].append({'detail': detail, 'task': task.strip()})
                     except ValueError:
-                        pass
+                        continue
 
     # イベントデータ
     events_by_day = defaultdict(list)
     for ev in Event.objects.filter(date__range=(start_date, end_date)):
         events_by_day[ev.date].append(ev)
 
-    # コンテキスト
+    # 🔚 コンテキストに渡す
     context = {
         'weeks': weeks,
+        'week_days': week_days,
         'view_mode': view_mode,
         'lessons_by_day': lessons_by_day,
         'homeworks_by_day': homeworks_by_day,
@@ -222,28 +240,7 @@ def weekly_view(request):
         'today': today,
     }
 
-
-    # 今までのデータ取得処理（省略）
-    context = {
-        'weeks': weeks,
-        'view_mode': view_mode,
-        'lessons_by_day': lessons_by_day,
-        'homeworks_by_day': homeworks_by_day,
-        'events_by_day': events_by_day,
-        'today': today,
-    }
     return render(request, 'homework/weekly_view.html', context)
-
-def get_second_sunday(year, month):
-    import datetime
-    day = datetime.date(year, month, 1)
-    sundays = []
-    while day.month == month:
-        if day.weekday() == 6:  # 日曜日
-            sundays.append(day)
-        day += datetime.timedelta(days=1)
-    return sundays[1]  # 第二日曜
-
 
 
 
