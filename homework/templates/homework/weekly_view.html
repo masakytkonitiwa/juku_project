@@ -6,60 +6,56 @@
 {% block content %}
 <div class="text-lg">
 
+<!-- 🔁 表示形式切り替え -->
 <form method="get" action="{% url 'weekly_view' %}" class="mb-6">
-
-    <!-- 横並び・スクロール対応 -->
-    <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2">
-      <button type="submit" name="view_mode" value="3weeks"
-              class="min-w-fit px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap
-                     {% if view_mode == '3weeks' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-        📅 3週間表示
-      </button>
-      <button type="submit" name="view_mode" value="month"
-              class="min-w-fit px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap
-                     {% if view_mode == 'month' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-        🗓️ 月ごと表示
-      </button>
-      <button type="submit" name="view_mode" value="test"
-              class="min-w-fit px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap
-                     {% if view_mode == 'test' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-        📝 テストまで表示
-      </button>
-      <button type="submit" name="view_mode" value="div"
-              class="min-w-fit px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap
-                     {% if view_mode == 'div' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
-        📱 スマホ表示
-      </button>
-    </div>
-  </form>
+  <div class="flex flex-nowrap overflow-x-auto gap-2 pb-2">
+    <button type="submit" name="view_mode" value="3weeks"
+            class="min-w-fit px-3 py-2 rounded-xl text-base font-medium whitespace-nowrap
+                   {% if view_mode == '3weeks' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
+      📅 3週間表示
+    </button>
+    <button type="submit" name="view_mode" value="month"
+            class="min-w-fit px-3 py-2 rounded-xl text-base font-medium whitespace-nowrap
+                   {% if view_mode == 'month' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
+      🗓️ 月ごと表示
+    </button>
+    <button type="submit" name="view_mode" value="test"
+            class="min-w-fit px-3 py-2 rounded-xl text-base font-medium whitespace-nowrap
+                   {% if view_mode == 'test' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
+      📝 テストまで表示
+    </button>
+    <button type="submit" name="view_mode" value="div"
+            class="min-w-fit px-3 py-2 rounded-xl text-base font-medium whitespace-nowrap
+                   {% if view_mode == 'div' %}bg-blue-500 text-white{% else %}bg-gray-200{% endif %}">
+      📱 スマホ表示
+    </button>
+  </div>
+</form>
 
 <!-- ➕ 各登録ボタン -->
-
-<!-- ✅ 親に w-full を追加、gap はそのまま -->
 <div class="mb-4 w-full flex flex-col gap-3">
-    <a href="{% url 'add_homework' %}"
-       class="w-full bg-green-500 hover:bg-blue-600 text-white font-semibold text-lg py-3 px-5 rounded-2xl shadow text-center">
-        ➕ 宿題を追加
-    </a>
-    <a href="{% url 'add_event' %}"
-       class="w-full bg-green-500 hover:bg-blue-600  text-white font-semibold text-lg py-3 px-5 rounded-2xl shadow text-center">
-        ➕ イベントを追加
-    </a>
-    <a href="{% url 'add_lesson' %}"
-       class="w-full bg-green-500 hover:bg-blue-600 text-white font-bold text-lg py-3 px-5 rounded-2xl shadow text-center border border-orange-700">
-        ➕ 授業を追加
-    </a>
+  <a href="{% url 'add_homework' %}"
+     class="w-full bg-green-500 hover:bg-blue-600 text-white font-semibold text-lg py-3 px-5 rounded-2xl shadow text-center">
+      ➕ 宿題を追加
+  </a>
+  <a href="{% url 'add_event' %}"
+     class="w-full bg-green-500 hover:bg-blue-600 text-white font-semibold text-lg py-3 px-5 rounded-2xl shadow text-center">
+      ➕ イベントを追加
+  </a>
+  <a href="{% url 'add_lesson' %}"
+     class="w-full bg-green-500 hover:bg-blue-600 text-white font-bold text-lg py-3 px-5 rounded-2xl shadow text-center border border-orange-700">
+      ➕ 授業を追加
+  </a>
 </div>
 
-
+<!-- 📱 スマホ用 縦表示 -->
 <h2 class="text-lg font-bold mb-4">📱 スマホ用週間スケジュール（縦表示）</h2>
-
 <div class="flex flex-col gap-4">
   {% for day in week_days %}
   <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
     
-    <!-- 🎨 日付表示：色分け -->
-    <div class="text-sm font-bold mb-2
+    <!-- 🎨 日付 -->
+    <div class="text-base font-bold mb-2
         {% if day == today %}
             text-blue-800
         {% elif day|date:'w' == '6' %}
@@ -75,23 +71,23 @@
 
     <!-- 📅 イベント -->
     {% for ev in events_by_day|get_item:day %}
-    <div class="bg-yellow-100 rounded px-2 py-1 mb-1 text-sm">
+    <div class="bg-yellow-100 rounded px-2 py-1 mb-1 text-base">
       📅 {{ ev.name }}
-      <a href="{% url 'delete_event' ev.id %}" class="text-red-500 ml-2">❌</a>
+      <a href="{% url 'delete_event' ev.id %}" class="text-red-500 ml-2 text-base">❌</a>
     </div>
     {% endfor %}
 
     <!-- 📘 授業 -->
     {% for lesson in lessons_by_day|get_item:day %}
-    <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-sm">
+    <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-base">
       📘 {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
     </div>
     {% endfor %}
 
     <!-- 📋 宿題 -->
     {% for hw_entry in homeworks_by_day|get_item:day %}
-    <div class="bg-green-100 rounded px-2 py-1 mb-1 text-sm">
-      🏫 {{ hw_entry.detail.get_course_display }}
+    <div class="bg-green-100 rounded px-2 py-1 mb-1 text-base">
+      🏫 {{ hw_entry.detail.get_course_display }}<br>
       📋 {{ hw_entry.task }}
       <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}">
         {% csrf_token %}
@@ -104,50 +100,50 @@
   {% endfor %}
 </div>
 
-<!-- 🖥️ テーブル表示（3weeks・month・test） -->
+<!-- 🖥️ テーブル表示（PC用） -->
 {% if view_mode != 'div' %}
 <h2 class="text-lg font-bold mb-4">🗓️ 塾カレンダー（{{ view_mode }}）</h2>
 <div class="calendar-wrapper">
-    <table>
-        {% for week in weeks %}
-        <tr>
-            {% for day in week %}
-            <th>{{ day|date:"m月d日 (D)" }}</th>
-            {% endfor %}
-        </tr>
-        <tr>
-            {% for day in week %}
-            <td class="{% if day == today %}today{% endif %}">
-                {% for ev in events_by_day|get_item:day %}
-                    <div>📅 {{ ev.name }} <a href="{% url 'delete_event' ev.id %}" style="color:red;">❌</a></div>
-                {% endfor %}
-
-                {% for lesson in lessons_by_day|get_item:day %}
-                <div style="background-color: #ffe0b3; font-size: 0.8em; margin: 2px 0;">
-                    授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
-                    {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
-                    <a href="{% url 'delete_lesson' lesson.id %}" style="color:red;">❌</a>
-                </div>
-                {% endfor %}
-
-                {% for hw_entry in homeworks_by_day|get_item:day %}
-                <div class="homework-box subject-{{ hw_entry.detail.homework.subject }}">
-                    {{ hw_entry.detail.homework.get_subject_display }}<br>
-                    🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
-                    📋 {{ hw_entry.task }}
-                    <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" style="display:inline;">
-                        {% csrf_token %}
-                        <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
-                    </form>
-                </div>
-                {% endfor %}
-            </td>
-            {% endfor %}
-        </tr>
+  <table>
+    {% for week in weeks %}
+    <tr>
+      {% for day in week %}
+      <th>{{ day|date:"m月d日 (D)" }}</th>
+      {% endfor %}
+    </tr>
+    <tr>
+      {% for day in week %}
+      <td class="{% if day == today %}today{% endif %}">
+        {% for ev in events_by_day|get_item:day %}
+          <div>📅 {{ ev.name }} <a href="{% url 'delete_event' ev.id %}" style="color:red;">❌</a></div>
         {% endfor %}
-    </table>
+
+        {% for lesson in lessons_by_day|get_item:day %}
+        <div style="background-color: #ffe0b3; font-size: 0.9em; margin: 2px 0;">
+          授業 {{ lesson.subject.name }} / {{ lesson.course.name }}
+          {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
+          <a href="{% url 'delete_lesson' lesson.id %}" style="color:red;">❌</a>
+        </div>
+        {% endfor %}
+
+        {% for hw_entry in homeworks_by_day|get_item:day %}
+        <div class="homework-box subject-{{ hw_entry.detail.homework.subject }}">
+          {{ hw_entry.detail.homework.get_subject_display }}<br>
+          🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
+          📋 {{ hw_entry.task }}
+          <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" style="display:inline;">
+            {% csrf_token %}
+            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
+          </form>
+        </div>
+        {% endfor %}
+      </td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
 </div>
 {% endif %}
-</div>
 
+</div>
 {% endblock %}
