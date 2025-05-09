@@ -18,6 +18,9 @@ from .models import HomeworkSubjectTemplate  # ← ファイルの先頭に追�
 from .models import HomeworkCourse  # ← 追加
 from .models import HomeworkProblemType  # ← 忘れずに追加！
 from .models import HomeworkProblemCountSetting 
+from django.db import connection  # ← 追加する
+
+
 
 def home_view(request):
     return render(request, 'homework/home.html')
@@ -147,6 +150,7 @@ def get_second_sunday(year, month):
     return sundays[1] if len(sundays) > 1 else sundays[0]
 
 def weekly_view(request):
+    print("【Render実行中】使用中のDB設定:", connection.settings_dict)  # ← 追加する
     today = date.today()
     view_mode = request.GET.get('view_mode', '3weeks')
     print("選択された表示形式:", view_mode)
