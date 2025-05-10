@@ -12,6 +12,9 @@ from . import views
 from .views import signup_view
 from django.urls import path
 from . import views
+from django.urls import path
+from .views import db_version_view
+
 
 
 
@@ -62,4 +65,7 @@ urlpatterns = [
 
     path('problem_count/setting/',views.homework_problem_count_setting_view,name='homework_problem_count_setting'),
 
+    path('db-version/', db_version_view),  # ← 追加
+
 ]
+
