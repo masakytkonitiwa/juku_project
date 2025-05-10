@@ -204,13 +204,6 @@ def weekly_view(request):
     days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
     weeks = [days[i:i+7] for i in range(0, len(days), 7)]
 
-    # div 表示用の week_days（今週の7日間）
-    if view_mode == 'div':
-        monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
-        week_days = [monday + timedelta(days=i) for i in range(21)]
-    else:
-        week_days = []
-
     # 授業データ
     lessons_by_day = defaultdict(list)
     for lesson in Lesson.objects.filter(date__range=(start_date, end_date)):
