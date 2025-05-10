@@ -757,11 +757,4 @@ def homework_problem_count_setting_view(request):
     })
 
 
-from django.http import HttpResponse
-from django.db import connection
 
-def db_version_view(request):
-    with connection.cursor() as cursor:
-        cursor.execute("SELECT version();")
-        version = cursor.fetchone()
-    return HttpResponse(f"Database version: {version}")

@@ -65,7 +65,7 @@ urlpatterns = [
 
     path('problem_count/setting/',views.homework_problem_count_setting_view,name='homework_problem_count_setting'),
 
-    path('db-version/', db_version_view),  # ← 追加
+
 
 ]
 
