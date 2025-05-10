@@ -186,10 +186,12 @@ def weekly_view(request):
         end_date = second_sunday
 
     elif view_mode == 'div':
+        # 3週間分のデータを取得
         monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
-        week_days = [monday + timedelta(days=i) for i in range(21)]
+        week_days = [monday + timedelta(days=i) for i in range(21)]  # ← 21日分リスト生成
         start_date = monday
-        end_date = monday + timedelta(days=21)
+        end_date = monday + timedelta(days=20)  # ← 正確に20日後の最後の日まで含む
+
     else:
         # fallback
         start_date = today
