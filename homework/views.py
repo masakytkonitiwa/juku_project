@@ -189,7 +189,7 @@ def weekly_view(request):
         monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
         week_days = [monday + timedelta(days=i) for i in range(21)]
         start_date = monday
-        end_date = monday + timedelta(days=6)
+        end_date = monday + timedelta(days=21)
     else:
         # fallback
         start_date = today
