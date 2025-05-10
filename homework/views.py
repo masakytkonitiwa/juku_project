@@ -219,7 +219,8 @@ def weekly_view(request):
                         day_str, task = line.split(':', 1)
 
 
-                        day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                        # 修正後
+                        day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
                         if start_date <= day <= end_date:
                             homeworks_by_day[day].append({'detail': detail, 'task': task.strip()})
                     except ValueError:
