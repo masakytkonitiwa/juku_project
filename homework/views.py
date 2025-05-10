@@ -149,17 +149,22 @@ def get_second_sunday(year, month):
         d += timedelta(days=1)
     return sundays[1] if len(sundays) > 1 else sundays[0]
 
+
 def weekly_view(request):
-    print("【Render実行中】使用中のDB設定:", connection.settings_dict)  # ← 追加する
+    print("【Render実行中】使用中のDB設定:", connection.settings_dict)
     today = date.today()
     view_mode = request.GET.get('view_mode', 'div')
     print("選択された表示形式:", view_mode)
 
-    # ✅ 表示範囲を決定（start_date / end_date）
+    # ✅ 初期化しておく（すべての view_mode で使えるように）
+    week_days = []
+
+    # ✅ 表示範囲を決定
     if view_mode == '3weeks':
         week_start = today - timedelta(days=today.weekday())
         start_date = week_start - timedelta(weeks=1)
         end_date = start_date + timedelta(days=20)
+        week_days = [start_date + timedelta(days=i) for i in range(21)]
 
     elif view_mode == 'month':
         start_date = today.replace(day=1)
@@ -170,6 +175,7 @@ def weekly_view(request):
         end_date = date(next_month_year, next_month, 1) - timedelta(days=1)
         if end_date.weekday() != 6:
             end_date += timedelta(days=(6 - end_date.weekday()))
+        week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
     elif view_mode == 'test':
         year, month = today.year, today.month
@@ -184,66 +190,18 @@ def weekly_view(request):
         if start_date.weekday() != 0:
             start_date -= timedelta(days=start_date.weekday())
         end_date = second_sunday
+        week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
     elif view_mode == 'div':
-        # 3週間分のデータを取得
         monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
-        week_days = [monday + timedelta(days=i) for i in range(21)]  # ← 21日分リスト生成
         start_date = monday
-        end_date = monday + timedelta(days=20)  # ← 正確に20日後の最後の日まで含む
+        end_date = monday + timedelta(days=20)
+        week_days = [start_date + timedelta(days=i) for i in range(21)]
 
     else:
-        # fallback
         start_date = today
         end_date = today + timedelta(days=6)
-        week_days = []
-
-    print("カレンダー表示範囲:", start_date, "〜", end_date)
-
-    # 📅 共通の週・日付リスト
-    days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
-    weeks = [days[i:i+7] for i in range(0, len(days), 7)]
-
-    # 授業データ
-    lessons_by_day = defaultdict(list)
-    for lesson in Lesson.objects.filter(date__range=(start_date, end_date)):
-        lessons_by_day[lesson.date].append(lesson)
-
-    # 宿題データ
-    homeworks_by_day = defaultdict(list)
-    for detail in HomeworkDetail.objects.all():
-        if detail.scheduled_task:
-            for line in detail.scheduled_task.splitlines():
-                if ':' in line:
-                    try:
-                        day_str, task = line.split(':', 1)
-
-
-                        # 修正後
-                        day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
-                        if start_date <= day <= end_date:
-                            homeworks_by_day[day].append({'detail': detail, 'task': task.strip()})
-                    except ValueError:
-                        continue
-
-    # イベントデータ
-    events_by_day = defaultdict(list)
-    for ev in Event.objects.filter(date__range=(start_date, end_date)):
-        events_by_day[ev.date].append(ev)
-
-    # 🔚 コンテキストに渡す
-    context = {
-        'weeks': weeks,
-        'week_days': week_days,
-        'view_mode': view_mode,
-        'lessons_by_day': lessons_by_day,
-        'homeworks_by_day': homeworks_by_day,
-        'events_by_day': events_by_day,
-        'today': today,
-    }
-
-    return render(request, 'homework/weekly_view.html', context)
-
+        week_days = [start_date + timedelta(days=i) for i in range(7)]
 
 
 
