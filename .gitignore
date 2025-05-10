@@ -1,1 +1,14 @@
+# Python
+*.pyc
+__pycache__/
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# 環境変数
 .env
+
+# ログファイル
+*.log
