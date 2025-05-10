@@ -262,7 +262,7 @@ def add_event_view(request):
     today = datetime.date.today()
     week_start = today - datetime.timedelta(days=today.weekday())
     start_date = week_start - datetime.timedelta(weeks=1)
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]
+    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(35)]
 
     templates = EventTemplate.objects.filter(user=request.user)
 
@@ -429,7 +429,7 @@ def add_lesson_view(request):
     today = datetime.date.today()
     week_start = today - datetime.timedelta(days=today.weekday())  # 今週の月曜
     start_date = week_start - datetime.timedelta(weeks=1)  # 先週の月曜
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]  # 先週〜来週
+    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(35)]  # 先週〜来週
 
     
     
