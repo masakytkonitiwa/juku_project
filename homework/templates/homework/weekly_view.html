@@ -96,16 +96,18 @@
         {% endfor %}
 
         {% for hw_entry in homeworks_by_day|get_item:day %}
-        <div class="homework-box subject-{{ hw_entry.detail.homework.subject }}">
-          {{ hw_entry.detail.homework.get_subject_display }}<br>
-          🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
+        <div class="bg-green-100 rounded px-2 py-1 mb-1 text-3xl">
+          📚 {{ hw_entry.detail.homework.get_subject_display }}<br>
+          🏫 {{ hw_entry.detail.get_course_display }}<br>
           📋 {{ hw_entry.task }}
-          <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" style="display:inline;">
+          <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}">
             {% csrf_token %}
-            <button type="submit" style="background:none; border:none; color:red; cursor:pointer; font-size:0.8em; padding:0;">❌</button>
+            <button type="submit" class="text-red-500 text-3xl ml-1">❌</button>
           </form>
         </div>
         {% endfor %}
+
+
       </td>
       {% endfor %}
     </tr>
