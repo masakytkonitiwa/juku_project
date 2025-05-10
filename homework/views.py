@@ -152,7 +152,7 @@ def get_second_sunday(year, month):
 def weekly_view(request):
     print("【Render実行中】使用中のDB設定:", connection.settings_dict)  # ← 追加する
     today = date.today()
-    view_mode = request.GET.get('view_mode', '3weeks')
+    view_mode = request.GET.get('view_mode', 'div')
     print("選択された表示形式:", view_mode)
 
     # ✅ 表示範囲を決定（start_date / end_date）
@@ -187,7 +187,7 @@ def weekly_view(request):
 
     elif view_mode == 'div':
         monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
-        week_days = [monday + timedelta(days=i) for i in range(7)]
+        week_days = [monday + timedelta(days=i) for i in range(21)]
         start_date = monday
         end_date = monday + timedelta(days=6)
     else:

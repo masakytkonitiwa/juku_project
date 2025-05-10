@@ -42,7 +42,8 @@
     <!-- 📘 授業 -->
     {% for lesson in lessons_by_day|get_item:day %}
     <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-3xl">
-      📘 {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
+      📘 📘 {{ lesson.subject.name }} / {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
+
     </div>
     {% endfor %}
 
