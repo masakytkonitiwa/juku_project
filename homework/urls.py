@@ -13,7 +13,7 @@ from .views import signup_view
 from django.urls import path
 from . import views
 from django.urls import path
-from .views import db_version_view
+
 
 
 
