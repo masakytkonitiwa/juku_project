@@ -206,6 +206,52 @@ def weekly_view(request):
 
 
 
+    print("カレンダー表示範囲:", start_date, "〜", end_date)
+
+    # 📅 共通の週・日付リスト
+    days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
+    weeks = [days[i:i+7] for i in range(0, len(days), 7)]
+
+    # 授業データ
+    lessons_by_day = defaultdict(list)
+    for lesson in Lesson.objects.filter(date__range=(start_date, end_date)):
+        lessons_by_day[lesson.date].append(lesson)
+
+    # 宿題データ
+    homeworks_by_day = defaultdict(list)
+    for detail in HomeworkDetail.objects.all():
+        if detail.scheduled_task:
+            for line in detail.scheduled_task.splitlines():
+                if ':' in line:
+                    try:
+                        day_str, task = line.split(':', 1)
+                        day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                        if start_date <= day <= end_date:
+                            homeworks_by_day[day].append({'detail': detail, 'task': task.strip()})
+                    except ValueError:
+                        continue
+
+    # イベントデータ
+    events_by_day = defaultdict(list)
+    for ev in Event.objects.filter(date__range=(start_date, end_date)):
+        events_by_day[ev.date].append(ev)
+
+    # 🔚 コンテキストに渡す
+    context = {
+        'weeks': weeks,
+        'week_days': week_days,
+        'view_mode': view_mode,
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+        'events_by_day': events_by_day,
+        'today': today,
+    }
+
+    return render(request, 'homework/weekly_view.html', context)
+
+
+
+
 from django.shortcuts import render, redirect
 from .models import Event, EventTemplate
 import datetime
