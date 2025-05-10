@@ -207,7 +207,7 @@ def weekly_view(request):
     # div 表示用の week_days（今週の7日間）
     if view_mode == 'div':
         monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
-        week_days = [monday + timedelta(days=i) for i in range(7)]
+        week_days = [monday + timedelta(days=i) for i in range(21)]
     else:
         week_days = []
 
