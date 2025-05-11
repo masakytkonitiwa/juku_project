@@ -149,58 +149,50 @@
 </div>
 
 
-
-
 <!-- 📅 表示切替 FAB（左上） -->
+<div id="view-menu-container" class="fixed top-6 left-6 z-50 text-left">
+  <!-- ボタン本体 -->
+  <button
+    class="w-36 h-36 rounded-full bg-purple-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-purple-600">
+    ≡
+  </button>
 
-<div class="fixed top-6 left-6 z-50 text-left">
-    <!-- ボタン本体 -->
-    <button onclick="toggleViewMenu()"
-        class="w-36 h-36 rounded-full bg-purple-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-purple-600">
-            ≡
-    </button>
-  
-    <!-- 🔽 メニュー -->
-    <div id="view-menu" class="hidden mt-3 space-y-4">
-      <form method="get" action="{% url 'weekly_view' %}">
-        <input type="hidden" name="view_mode" value="div">
-        <button type="submit"
-                style="font-size: 5rem;"
-                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
-          📱 スマホ用縦表示
-        </button>
-      </form>
-      <form method="get" action="{% url 'weekly_view' %}">
-        <input type="hidden" name="view_mode" value="3weeks">
-
-
-
-        <button type="submit"
-                style="font-size: 5rem;"
-                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-9xl font-bold px-6 py-4 rounded-lg shadow">
-          📅 3週間
-        </button>
-      </form>
-      <form method="get" action="{% url 'weekly_view' %}">
-        <input type="hidden" name="view_mode" value="month">
-        <button type="submit"
-                style="font-size: 5rem;"
-                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
-          🗓️ 月表示
-        </button>
-      </form>
-
-      <form method="get" action="{% url 'weekly_view' %}">
-        <input type="hidden" name="view_mode" value="test">
-        <button type="submit"
-                style="font-size: 5rem;"
-                class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
-          📝 テストまで
-        </button>
-      </form>
-
-    </div>
+  <!-- 🔽 メニュー -->
+  <div id="view-menu" class="hidden mt-3 space-y-4">
+    <form method="get" action="{% url 'weekly_view' %}">
+      <input type="hidden" name="view_mode" value="div">
+      <button type="submit"
+              style="font-size: 5rem;"
+              class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+        📱 スマホ用縦表示
+      </button>
+    </form>
+    <form method="get" action="{% url 'weekly_view' %}">
+      <input type="hidden" name="view_mode" value="3weeks">
+      <button type="submit"
+              style="font-size: 5rem;"
+              class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-9xl font-bold px-6 py-4 rounded-lg shadow">
+        📅 3週間
+      </button>
+    </form>
+    <form method="get" action="{% url 'weekly_view' %}">
+      <input type="hidden" name="view_mode" value="month">
+      <button type="submit"
+              style="font-size: 5rem;"
+              class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+        🗓️ 月表示
+      </button>
+    </form>
+    <form method="get" action="{% url 'weekly_view' %}">
+      <input type="hidden" name="view_mode" value="test">
+      <button type="submit"
+              style="font-size: 5rem;"
+              class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
+        📝 テストまで
+      </button>
+    </form>
   </div>
+</div>
 
   
 
@@ -213,6 +205,9 @@
     menu.classList.toggle('hidden');
   }
 
+  
+
+      // FABメニュー
     const fabContainer = document.getElementById("fab-container");
     const fabMenu = document.getElementById("fab-menu");
 
@@ -222,6 +217,18 @@
 
     fabContainer.addEventListener("mouseleave", () => {
       fabMenu.classList.add("hidden");
+    });
+
+    // 表示切替メニュー
+    const viewMenuContainer = document.getElementById("view-menu-container");
+    const viewMenu = document.getElementById("view-menu");
+
+    viewMenuContainer.addEventListener("mouseenter", () => {
+      viewMenu.classList.remove("hidden");
+    });
+
+    viewMenuContainer.addEventListener("mouseleave", () => {
+      viewMenu.classList.add("hidden");
     });
 
   </script>
