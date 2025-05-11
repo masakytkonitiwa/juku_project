@@ -35,7 +35,7 @@ def homework_create_view(request):
     today = datetime.date.today()
     week_start = today - datetime.timedelta(days=today.weekday())
     start_date = week_start - datetime.timedelta(weeks=1)
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(21)]
+    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(35)]
 
     # 📌 最大問題数の設定を取得（デフォルトは30）
     latest_setting = HomeworkProblemCountSetting.objects.last()
