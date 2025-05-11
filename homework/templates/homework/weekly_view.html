@@ -119,28 +119,32 @@
     <!-- 最後の余白 -->
     <div class="h-120"></div>
 </div>
+
+
+
+
 <!-- 📌 フローティング「＋」＋ メニュー -->
-<div class="fixed bottom-6 right-6 z-50 text-right group">
+<div id="fab-container" class="fixed bottom-6 right-6 z-50 text-right">
   <!-- ＋ ボタン -->
   <button
-      class="w-36 h-36 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
-      ＋
+    class="w-36 h-36 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
+    ＋
   </button>
 
-  <!-- 🔽 メニュー（ホバーで表示） -->
-  <div class="hidden group-hover:block mt-3 space-y-4">
-      <a href="{% url 'add_homework' %}"
-         class="block bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-        ➕ 宿題を追加
-      </a>
-      <a href="{% url 'add_event' %}"
-         class="block bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-        🗓️ イベントを追加
-      </a>
-      <a href="{% url 'add_lesson' %}"
-         class="block bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-        📚 授業を追加
-      </a>
+  <!-- 🔽 メニュー（最初は非表示） -->
+  <div id="fab-menu" class="hidden mt-3 space-y-4">
+    <a href="{% url 'add_homework' %}"
+       class="block bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      ➕ 宿題を追加
+    </a>
+    <a href="{% url 'add_event' %}"
+       class="block bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      🗓️ イベントを追加
+    </a>
+    <a href="{% url 'add_lesson' %}"
+       class="block bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      📚 授業を追加
+    </a>
   </div>
 </div>
 
@@ -208,6 +212,17 @@
     const menu = document.getElementById('view-menu');
     menu.classList.toggle('hidden');
   }
+
+    const fabContainer = document.getElementById("fab-container");
+    const fabMenu = document.getElementById("fab-menu");
+
+    fabContainer.addEventListener("mouseenter", () => {
+      fabMenu.classList.remove("hidden");
+    });
+
+    fabContainer.addEventListener("mouseleave", () => {
+      fabMenu.classList.add("hidden");
+    });
 
   </script>
 
