@@ -199,39 +199,60 @@
 
   
 
-
 <script>
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+  // FABメニュー（右下の＋）
+  const fabContainer = document.getElementById("fab-container");
+  const fabMenu = document.getElementById("fab-menu");
 
-    function toggleViewMenu() {
-    const menu = document.getElementById('view-menu');
-    menu.classList.toggle('hidden');
-  }
+  // 表示切替メニュー（左上の≡）
+  const viewMenuContainer = document.getElementById("view-menu-container");
+  const viewMenu = document.getElementById("view-menu");
 
-  
-    const fabContainer = document.getElementById("fab-container");
-    const fabMenu = document.getElementById("fab-menu");
+  if (isMobile) {
+    // スマホ：クリックで開閉（トグル）
+    let fabOpen = false;
+    fabContainer.addEventListener("click", () => {
+      fabOpen = !fabOpen;
+      fabMenu.classList.toggle("hidden", !fabOpen);
+    });
 
+    let viewOpen = false;
+    viewMenuContainer.addEventListener("click", () => {
+      viewOpen = !viewOpen;
+      viewMenu.classList.toggle("hidden", !viewOpen);
+    });
+
+    // 任意：外部クリックで閉じる
+    document.addEventListener("click", (e) => {
+      if (!fabContainer.contains(e.target)) {
+        fabMenu.classList.add("hidden");
+        fabOpen = false;
+      }
+      if (!viewMenuContainer.contains(e.target)) {
+        viewMenu.classList.add("hidden");
+        viewOpen = false;
+      }
+    });
+
+  } else {
+    // PC：ホバーで表示・非表示
     fabContainer.addEventListener("mouseenter", () => {
       fabMenu.classList.remove("hidden");
     });
-
     fabContainer.addEventListener("mouseleave", () => {
       fabMenu.classList.add("hidden");
     });
 
-    // 表示切替メニュー
-    const viewMenuContainer = document.getElementById("view-menu-container");
-    const viewMenu = document.getElementById("view-menu");
-
     viewMenuContainer.addEventListener("mouseenter", () => {
       viewMenu.classList.remove("hidden");
     });
-
     viewMenuContainer.addEventListener("mouseleave", () => {
       viewMenu.classList.add("hidden");
     });
+  }
+</script>
 
-  </script>
 
 {% endblock %}
