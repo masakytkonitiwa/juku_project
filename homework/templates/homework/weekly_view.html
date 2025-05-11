@@ -124,29 +124,32 @@
 
 
 <!-- 📌 フローティング「＋」＋ メニュー -->
-<div id="fab-container" class="fixed bottom-6 right-6 z-50 text-right">
-  <!-- ＋ ボタン -->
+<div id="fab-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-3">
+  <!-- メニュー（ホバー時表示） -->
+  <div id="fab-menu" class="hidden flex flex-col items-end space-y-4">
+    <a href="{% url 'add_homework' %}"
+       class="bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      ➕ 宿題を追加
+    </a>
+    <a href="{% url 'add_event' %}"
+       class="bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      🗓️ イベントを追加
+    </a>
+    <a href="{% url 'add_lesson' %}"
+       class="bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
+      📚 授業を追加
+    </a>
+  </div>
+
+  <!-- ＋ボタン -->
   <button
     class="w-36 h-36 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
     ＋
   </button>
-
-  <!-- 🔽 メニュー（最初は非表示） -->
-  <div id="fab-menu" class="hidden mt-3 space-y-4">
-    <a href="{% url 'add_homework' %}"
-       class="block bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-      ➕ 宿題を追加
-    </a>
-    <a href="{% url 'add_event' %}"
-       class="block bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-      🗓️ イベントを追加
-    </a>
-    <a href="{% url 'add_lesson' %}"
-       class="block bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
-      📚 授業を追加
-    </a>
-  </div>
 </div>
+
+
+
 
 
 <!-- 📅 表示切替 FAB（左上） -->
@@ -206,8 +209,6 @@
   }
 
   
-
-      // FABメニュー
     const fabContainer = document.getElementById("fab-container");
     const fabMenu = document.getElementById("fab-menu");
 
