@@ -1,0 +1,57 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+
+{% block title %}宿題登録 Step 1{% endblock %}
+
+<body class="text-6xl">
+{% block content %}
+<!-- ステップバー（矢印） -->
+<div class="arrow-steps">
+  <div class="step current">1</div>
+  <div class="step">2</div>
+  <div class="step">3</div>
+  <div class="step">4</div>
+  <div class="step">5</div>
+  <div class="step">6</div>
+  <div class="step">7</div>
+</div>
+
+<h2 class="text-2xl my-6">① 宿題科目を選択</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="button-group" id="subject-buttons">
+    {% for template in homework_subject_templates %}
+    <button type="submit" name="subject" value="{{ template.id }}"
+      class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-xl">
+            📚 {{ template.name }}
+        </button>
+    {% empty %}
+        <p>登録されている科目がありません。</p>
+    {% endfor %}
+
+
+
+    <!-- コース追加ボタン -->
+    <a href="{% url 'homework_subject_template_list' %}"
+       class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl text-center block">
+      ➕ 科目を追加・削除
+    </a>
+  </div>
+
+
+</form>
+
+
+ 
+
+<!-- 戻るボタン -->
+<div class="mt-10 text-center">
+  <a href="{% url 'weekly_view' %}" class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+    ← 戻る
+  </a>
+</div>
+
+{% endblock %}
+</body>
+

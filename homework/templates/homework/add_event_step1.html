@@ -1,0 +1,30 @@
+{% extends 'homework/base.html' %}
+{% block content %}
+
+<div class="arrow-steps">
+  <div class="step current">1</div>
+  <div class="step">2</div>
+  <div class="step">3</div>
+</div>
+
+<h2 class="text-2xl my-6">① イベントテンプレートを選択</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid gap-4">
+    {% for template in templates %}
+      <button type="submit" name="name" value="{{ template.name }}"
+              class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl text-xl w-full">
+        📅 {{ template.name }}
+      </button>
+    {% empty %}
+      <p>テンプレートがありません。</p>
+    {% endfor %}
+
+    <a href="{% url 'add_event_template' %}" class="block text-center bg-green-300 hover:bg-green-500 text-white font-bold py-4 px-6 rounded-xl text-xl">
+      ➕ イベントを新規作成or削除
+    </a>
+  </div>
+</form>
+
+{% endblock %}

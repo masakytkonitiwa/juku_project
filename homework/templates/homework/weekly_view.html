@@ -127,15 +127,15 @@
 <div id="fab-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-3">
   <!-- メニュー（ホバー時表示） -->
   <div id="fab-menu" class="hidden flex flex-col items-end space-y-4">
-    <a href="{% url 'add_homework' %}"
+    <a href="{% url 'homework_wizard_step1' %}"
        class="bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
       ➕ 宿題を追加
     </a>
-    <a href="{% url 'add_event' %}"
+    <a href="{% url 'add_event_step1' %}"
        class="bg-yellow-500 hover:bg-yellow-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
       🗓️ イベントを追加
     </a>
-    <a href="{% url 'add_lesson' %}"
+    <a href="{% url 'lesson_wizard_step1' %}"
        class="bg-red-500 hover:bg-red-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
       📚 授業を追加
     </a>

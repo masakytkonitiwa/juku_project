@@ -1,0 +1,63 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+{% load homework_extras %}
+
+{% block title %}授業登録 Step 1{% endblock %}
+
+{% block content %}
+
+<!-- ステップバー -->
+<div class="arrow-steps">
+    <div class="step current">1</div>
+    <div class="step">2</div>
+    <div class="step">3</div>
+</div>
+
+<h1>授業登録ステップ①：テンプレートを選択</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="subject" id="id_subject">
+    <input type="hidden" name="course" id="id_course">
+    <input type="hidden" name="start_time" id="id_start_time">
+    <input type="hidden" name="end_time" id="id_end_time">
+
+    <div class="button-group">
+        {% for template in templates %}
+            <button type="button" class="template-button"
+                data-subject="{{ template.subject.id }}"
+                data-course="{{ template.course.id }}"
+                data-start="{{ template.start_time }}"
+                data-end="{{ template.end_time }}">
+                {{ template.subject.name }} / {{ template.course.name }}<br>
+                {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+            </button>
+        {% empty %}
+            <p>テンプレートがありません。</p>
+        {% endfor %}
+
+        <a href="{% url 'add_lesson_template' %}" class="template-button" style="text-decoration: none;">
+            ➕ 授業を新規作成or削除
+        </a>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+        <button type="submit" class="next-button">次へ進む</button>
+    </div>
+</form>
+
+<script>
+    const buttons = document.querySelectorAll('.template-button');
+    buttons.forEach(button => {
+        button.addEventListener('click', () => {
+            buttons.forEach(b => b.classList.remove('selected'));
+            button.classList.add('selected');
+            document.getElementById('id_subject').value = button.dataset.subject;
+            document.getElementById('id_course').value = button.dataset.course;
+            document.getElementById('id_start_time').value = button.dataset.start;
+            document.getElementById('id_end_time').value = button.dataset.end;
+        });
+    });
+</script>
+
+{% endblock %}

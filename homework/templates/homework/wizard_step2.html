@@ -1,0 +1,75 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+
+{% block title %}宿題登録 Step 2{% endblock %}
+
+<body class="text-6xl">
+{% block content %}
+
+<!-- ステップバー -->
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step current">2</div>
+  <div class="step">3</div>
+  <div class="step">4</div>
+  <div class="step">5</div>
+  <div class="step">6</div>
+  <div class="step">7</div>
+</div>
+
+
+{% if selected_subject %}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    
+    {% if selected_subject %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+      <div class="text-sm text-gray-500 mb-2">選択した科目</div>
+      <div class="text-xl font-semibold text-green-600">
+        {{ selected_subject.name }}
+      </div>
+    </div>
+    {% endif %}
+
+
+
+
+
+  </div>
+{% endif %}
+
+
+
+<h2 class="text-2xl my-6">② 宿題コースを選択</h2>
+
+
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid grid-cols-1 gap-4">
+    {% for course in courses %}
+    <button type="submit" name="course" value="{{ course.id }}"
+            class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-xl">
+      🏫 {{ course.name }}
+    </button>
+    {% endfor %}
+
+    <!-- コース追加ボタン -->
+    <a href="{% url 'homework_course_template_list' %}"
+       class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl text-center block">
+      ➕ コースを追加・削除
+    </a>
+  </div>
+</form>
+
+
+
+<!-- 戻る -->
+<div class="mt-10 text-center">
+  <a href="{% url 'homework_wizard_step1' %}"
+     class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+    ← 戻る
+  </a>
+</div>
+
+{% endblock %}
+</body>

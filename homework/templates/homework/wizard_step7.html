@@ -1,0 +1,136 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+{% load homework_extras %}
+
+{% block title %}宿題登録 Step 7{% endblock %}
+
+<body class="text-6xl">
+{% block content %}
+
+<!-- ステップバー -->
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step done">2</div>
+  <div class="step done">3</div>
+  <div class="step done">4</div>
+  <div class="step done">5</div>
+  <div class="step done">6</div>
+  <div class="step current">7</div>
+</div>
+
+<h2 class="text-2xl my-6">⑦ 確認と登録</h2>
+
+<!-- 登録内容の確認 -->
+<div class="text-xl my-6">
+  <p><strong>科目:</strong> {{ subject }}</p>
+  <p><strong>コース:</strong> {{ course }}</p>
+  <p><strong>問題タイプ:</strong> {{ problem_type }}</p>
+  <p><strong>問題数:</strong> {{ problem_count }}</p>
+  <p><strong>周回数:</strong> {{ cycles }}</p>
+  <p><strong>選択した日付:</strong> {{ selected_dates|join:", " }}</p>
+</div>
+
+{% if selected_subject %}
+  <div class="bg-gray-100 p-4 rounded-xl mb-4 text-xl text-gray-700 shadow">
+    ✅ 選択した科目：<strong>{{ selected_subject.name }}</strong>
+  </div>
+{% endif %}
+
+{% if selected_course %}
+  <div class="bg-gray-100 p-4 rounded-xl mb-6 text-xl text-gray-700 shadow">
+    📘 選択したコース：<strong>{{ selected_course.name }}</strong>
+  </div>
+{% endif %}
+
+
+<!-- 宿題の確認 -->
+<h3 class="text-xl my-6">宿題のスケジュール</h3>
+<div class="bg-gray-100 p-6 rounded-lg shadow-md">
+  <ul>
+    {% for task in scheduled_tasks %}
+      <li><strong>{{ task.date }}:</strong> {{ task.task }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+
+
+<!-- カレンダー表示 -->
+<h3 class="text-xl my-6">日付を選択したカレンダー</h3>
+<form method="post">
+  {% csrf_token %}
+
+  <input type="hidden" name="subject" value="{{ subject }}">
+  <input type="hidden" name="course" value="{{ course }}">
+  <input type="hidden" name="problem_type" value="{{ problem_type }}">
+  <input type="hidden" name="problem_count" value="{{ problem_count }}">
+  <input type="hidden" name="cycles" value="{{ cycles }}">
+  <input type="hidden" name="selected_dates" id="selected_dates">
+
+  <!-- 最初のカレンダー行開始 -->
+  <div class="calendar">
+    {% for day in calendar_days %}
+      {% with day_str=day|date:'Y-m-d' %}
+      <div class="day {% if day in selected_dates %}selected{% endif %} {% if day == today %}today{% endif %}" data-date="{{ day_str }}">
+        {{ day|date:"m/d (D)" }}
+
+        <!-- イベント -->
+        {% for ev in events_by_day|get_item:day %}
+          <div class="bg-yellow-100 text-sm">📅 {{ ev.name }}</div>
+        {% endfor %}
+
+        <!-- 授業 -->
+        {% for lesson in lessons_by_day|get_item:day %}
+          <div class="bg-orange-100 text-sm">
+            {{ lesson.subject.name }}/{{ lesson.course.name }}
+          </div>
+        {% endfor %}
+
+        <!-- 既存宿題 -->
+        {% for hw_entry in homeworks_by_day|get_item:day %}
+          <div class="bg-blue-100 text-sm">
+            📋 {{ hw_entry.task }}
+          </div>
+        {% endfor %}
+
+
+        {% for task in scheduled_tasks %}
+        {% if task.date|stringformat:"s" == day_str %}
+          <div class="bg-blue-200 text-sm">
+            📝 {{ task.subject }} / {{ task.course }}<br>
+            {{ task.task }}
+          </div>
+        {% endif %}
+      {% endfor %}
+      
+
+
+      </div>
+      {% endwith %}
+
+      <!-- 7日ごとに新しい週の行を開始 -->
+      {% if forloop.counter|divisibleby:7 and not forloop.last %}
+        </div><div class="calendar">
+      {% endif %}
+    {% endfor %}
+  </div>  <!-- 最終的なカレンダー行の終了 -->
+
+  <div class="text-center mt-10">
+    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg">
+      登録する
+    </button>
+  </div>
+</form>
+
+
+
+<!-- 戻るボタン -->
+<div class="mt-10 text-center">
+  <a href="{% url 'homework_wizard_step6' %}" class="bg-green-400 hover:bg-green-600 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+    ← 戻る
+  </a>
+</div>
+
+
+{% endblock %}
+</body>

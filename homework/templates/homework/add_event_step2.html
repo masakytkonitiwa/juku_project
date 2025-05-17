@@ -1,0 +1,79 @@
+{% extends 'homework/base.html' %}
+{% load homework_extras %}
+{% block content %}
+
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step current">2</div>
+  <div class="step">3</div>
+</div>
+
+
+
+
+{% if event_name %}
+<div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+    <div class="text-sm text-gray-500 mb-2">選択したイベント</div>
+
+    <div class="text-xl font-semibold text-green-600">
+      📅 {{ event_name }}
+    </div>
+  </div>
+{% endif %}
+
+<h2 class="text-2xl my-6">② 日付を選択</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <input type="hidden" name="selected_date" id="selected_date">
+
+  <div class="calendar">
+    {% for day in calendar_days %}
+      <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
+        {{ day|date:"m/d (D)" }}
+
+        {% for ev in events_by_day|get_item:day %}
+          <div class="bg-gray-200 text-sm my-1">📅 {{ ev.name }}</div>
+        {% endfor %}
+
+        {% for lesson in lessons_by_day|get_item:day %}
+          <div class="bg-yellow-100 text-sm my-1">
+            授業 {{ lesson.subject.name }} / {{ lesson.course.name }} {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
+          </div>
+        {% endfor %}
+
+        {% for hw in homeworks_by_day|get_item:day %}
+          <div class="homework-box text-xs my-1">
+            📝 {{ hw.detail.homework.get_subject_display }} / {{ hw.detail.get_course_display }}<br>
+            📋 {{ hw.task }}
+          </div>
+        {% endfor %}
+      </div>
+      {% if forloop.counter|divisibleby:7 and not forloop.last %}
+        </div><div class="calendar">
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <button type="submit" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl">
+    次へ進む
+  </button>
+</form>
+
+<script>
+const days = document.querySelectorAll('.day');
+const selectedDateInput = document.getElementById('selected_date');
+let selected = null;
+
+days.forEach(day => {
+  day.addEventListener('click', () => {
+    if (selected) selected.classList.remove('selected');
+    selected = day;
+    selected.classList.add('selected');
+    const isoDate = new Date(day.dataset.date).toISOString().split('T')[0];
+    selectedDateInput.value = isoDate;
+  });
+});
+</script>
+
+{% endblock %}

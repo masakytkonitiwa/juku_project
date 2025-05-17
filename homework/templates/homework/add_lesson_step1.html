@@ -1,0 +1,33 @@
+
+{% extends 'homework/base.html' %}
+{% block content %}
+
+<div class="arrow-steps">
+  <div class="step current">1</div>
+  <div class="step">2</div>
+  <div class="step">3</div>
+</div>
+
+<h2 class="text-2xl my-6">① 授業テンプレートを選択</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid gap-4">
+    {% for template in templates %}
+      <button type="submit" name="template_id" value="{{ template.id }}"
+              class="bg-yellow-300 hover:bg-yellow-500 text-black font-bold py-4 px-6 rounded-xl text-xl w-full">
+        🎓 {{ template.subject.name }} / {{ template.course.name }}
+        {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
+      </button>
+    {% empty %}
+      <p>テンプレートがありません。</p>
+    {% endfor %}
+
+    <a href="{% url 'add_lesson_template' %}"
+       class="block text-center bg-yellow-200 hover:bg-yellow-400 text-black font-bold py-4 px-6 rounded-xl text-xl">
+      ➕ 授業を新規作成or削除
+    </a>
+  </div>
+</form>
+
+{% endblock %}

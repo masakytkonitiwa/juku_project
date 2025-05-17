@@ -1,0 +1,33 @@
+{% extends 'homework/base.html' %}
+{% block content %}
+
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step current">2</div>
+  <div class="step">3</div>
+</div>
+
+<h2 class="text-2xl my-6">② 授業テンプレート確認</h2>
+
+
+
+{% if session.lesson_subject and session.lesson_course and session.lesson_start_time and session.lesson_end_time %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200 mb-4">
+        <div class="text-sm text-gray-500 mb-2">選択中のテンプレート</div>
+        <div class="text-xl font-semibold text-blue-600">
+            🎓 {{ subject}} / {{ course }}<br>
+            🕒 {{ start_time }}〜{{ end_time }}
+        </div>
+    </div>
+{% endif %}
+
+<div class="bg-white border border-yellow-300 shadow-md rounded-xl p-6 text-lg">
+  <p>🎓 <strong>{{ lesson_subject.name }}</strong> 
+  
+</div>
+
+<p class="mt-6">
+  <a href="{% url 'add_lesson_step1' %}" class="text-blue-500 underline">← Step1 に戻る</a>
+</p>
+
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+{% load homework_extras %}
+
+{% block title %}授業登録 Step 2{% endblock %}
+
+{% block content %}
+
+<!-- ステップバー -->
+<div class="arrow-steps">
+    <div class="step done">1</div>
+    <div class="step current">2</div>
+    <div class="step">3</div>
+</div>
+
+
+<h1 class="text-2xl font-bold mb-4">授業登録ステップ②：日付を選択</h1>
+
+<div class="text-gray-500 mb-4">
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200 mb-4">
+        <div class="text-sm text-gray-500 mb-2">選択中のテンプレート</div>
+        <div class="text-xl font-semibold text-blue-600">
+            🎓 {{ subject.name}} / {{ course.name}}<br>
+            🕒 {{ start_time }}〜{{ end_time }}
+        </div>
+    </div>
+</div>
+
+
+<form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="selected_dates" id="selected_dates">
+
+    <div class="calendar">
+        {% for day in calendar_days %}
+            <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
+                <div class="date-label">{{ day|date:"m/d (D)" }}</div>
+    
+                {% for ev in events_by_day|get_item:day %}
+                    <div class="event-item">📅 {{ ev.name }}</div>
+                {% endfor %}
+    
+                {% for lesson in lessons_by_day|get_item:day %}
+                    <div class="lesson-item">🎓 {{ lesson.subject.name }} / {{ lesson.course.name }}</div>
+                {% endfor %}
+    
+                {% for hw in homeworks_by_day|get_item:day %}
+                    <div class="homework-box">
+                        {{ hw.detail.homework.get_subject_display }}<br>
+                        🏫 {{ hw.detail.get_course_display }} / {{ hw.detail.get_problem_type_display }}<br>
+                        📋 {{ hw.task }}
+                    </div>
+                {% endfor %}
+            </div>
+            {% if forloop.counter|divisibleby:7 and not forloop.last %}
+                </div><div class="calendar">
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+
+    <button type="submit" class="mt-4">次へ →</button>
+</form>
+
+<script>
+    const days = document.querySelectorAll('.day');
+    const selectedDates = new Set();
+    const selectedDatesInput = document.getElementById('selected_dates');
+
+    days.forEach(day => {
+        day.addEventListener('click', () => {
+            const isoDate = day.dataset.date;
+            if (selectedDates.has(isoDate)) {
+                selectedDates.delete(isoDate);
+                day.classList.remove('selected');
+            } else {
+                selectedDates.add(isoDate);
+                day.classList.add('selected');
+            }
+            selectedDatesInput.value = Array.from(selectedDates).join(',');
+        });
+    });
+</script>
+{% endblock %}

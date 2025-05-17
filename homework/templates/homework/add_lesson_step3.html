@@ -1,0 +1,31 @@
+--- add_lesson_step3.html ---
+{% extends 'homework/base.html' %}
+{% block content %}
+
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step done">2</div>
+  <div class="step current">3</div>
+</div>
+
+<h2 class="text-2xl my-6">③ 内容確認と登録</h2>
+
+<div class="bg-white border border-yellow-300 shadow-md rounded-xl p-4 mb-6 text-lg">
+  🎓 <strong>{{ subject_name }}</strong> / <strong>{{ course_name }}</strong><br>
+  🕓 <strong>{{ start_time }}〜{{ end_time }}</strong><br>
+  📅 日付:
+  <ul class="list-disc ml-6 mt-1">
+    {% for day in lesson_dates %}
+      <li>{{ day }}</li>
+    {% endfor %}
+  </ul>
+</div>
+
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="bg-yellow-600 hover:bg-yellow-800 text-white font-bold py-3 px-6 rounded-xl">
+    ✅ 登録する
+  </button>
+</form>
+
+{% endblock %}

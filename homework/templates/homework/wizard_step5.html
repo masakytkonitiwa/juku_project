@@ -1,0 +1,93 @@
+{% extends 'homework/base.html' %}
+{% load static %}
+
+{% block title %}宿題登録 Step 5{% endblock %}
+
+<body class="text-6xl">
+{% block content %}
+<!-- ステップバー（矢印） -->
+<div class="arrow-steps">
+  <div class="step done">1</div>
+  <div class="step done">2</div>
+  <div class="step done">3</div>
+  <div class="step done">4</div>
+  <div class="step current">5</div>
+  <div class="step">6</div>
+  <div class="step">7</div>
+</div>
+
+
+
+{% if selected_subject or selected_course or selected_problem_type %}
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    
+    {% if selected_subject %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+      <div class="text-sm text-gray-500 mb-2">選択した科目</div>
+      <div class="text-xl font-semibold text-green-600">
+        {{ selected_subject.name }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if selected_course %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+      <div class="text-sm text-gray-500 mb-2">選択したコース</div>
+      <div class="text-xl font-semibold text-blue-600">
+        {{ selected_course.name }}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if selected_problem_type %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+      <div class="text-sm text-gray-500 mb-2">選択した問題タイプ</div>
+      <div class="text-xl font-semibold text-purple-600">
+        {{ selected_problem_type.name }}
+      </div>
+    </div>
+    {% endif %}
+
+
+
+    {% if selected_count %}
+    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
+      <div class="text-sm text-gray-500 mb-2">選択した問題数</div>
+      <div class="text-xl font-semibold text-purple-600">
+        {{ selected_count }}
+      </div>
+    </div>
+    {% endif %}
+
+  </div>
+{% endif %}
+
+
+<h2 class="text-2xl my-6">⑤ 宿題の周回数を選択</h2>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="grid grid-cols-1 gap-4">
+    <button type="submit" name="cycles" value="1"
+            class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl">
+      1周 ＋ 総復習
+    </button>
+    <button type="submit" name="cycles" value="2"
+            class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl">
+      2周 ＋ 総復習
+    </button>
+    <button type="submit" name="cycles" value="3"
+            class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl">
+      3周 ＋ 総復習
+    </button>
+  </div>
+</form>
+
+<!-- 戻るボタン -->
+<div class="mt-10 text-center">
+  <a href="{% url 'homework_wizard_step4' %}" class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+    ← 戻る
+  </a>
+</div>
+{% endblock %}
+</body>

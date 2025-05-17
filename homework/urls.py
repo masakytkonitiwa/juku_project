@@ -66,6 +66,23 @@ urlpatterns = [
     path('problem_count/setting/',views.homework_problem_count_setting_view,name='homework_problem_count_setting'),
 
 
+    path('homework/wizard/step1/', views.homework_wizard_step1, name='homework_wizard_step1'),
+    path('homework/wizard/step2/', views.homework_wizard_step2, name='homework_wizard_step2'),
+    path('homework/wizard/step3/', views.homework_wizard_step3, name='homework_wizard_step3'),
+    path('homework/wizard/step4/', views.homework_wizard_step4, name='homework_wizard_step4'),
+    path('homework/wizard/step5/', views.homework_wizard_step5, name='homework_wizard_step5'),
+    path('homework/wizard/step6/', views.homework_wizard_step6, name='homework_wizard_step6'),
+    path('homework/wizard/step7/', views.homework_wizard_step7, name='homework_wizard_step7'),
+    
+    
+    path('add_event/step1/', views.add_event_step1, name='add_event_step1'),
+    path('add_event/step2/', views.add_event_step2, name='add_event_step2'),
+    path('add_event/step3/', views.add_event_step3, name='add_event_step3'),
+    
+    path('lesson/wizard/step1/', views.lesson_wizard_step1, name='lesson_wizard_step1'),
+    path('lesson/wizard/step2/', views.lesson_wizard_step2, name='lesson_wizard_step2'),
+    path('lesson/wizard/step3/', views.lesson_wizard_step3, name='lesson_wizard_step3'),
+
 
 ]
 

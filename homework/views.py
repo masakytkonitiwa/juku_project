@@ -1,24 +1,44 @@
-from django.shortcuts import render, redirect
-from .forms import HomeworkForm
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-import datetime
+from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.utils import timezone
+from datetime import datetime, timedelta, date
+from django.db import connection
+
+from .forms import (
+    HomeworkForm,
+    EventForm,
+    EventTemplateForm,
+    HomeworkDetailFormSet,
+    LessonTemplateForm,
+    SignUpForm,
+    HomeworkSubjectTemplateForm,
+    CourseForm,
+    HomeworkCourseForm,
+    HomeworkProblemTypeForm,
+    HomeworkProblemCountSettingForm,
+    SubjectForm
+)
+
+from .models import (
+    Homework,
+    Event,
+    HomeworkDetail,
+    Lesson,
+    LessonTemplate,
+    Subject,
+    HomeworkSubjectTemplate,
+    HomeworkCourse,
+    HomeworkProblemType,
+    HomeworkProblemCountSetting,
+    EventTemplate,
+    Course
+)
+
+
 from collections import defaultdict
-from django.shortcuts import render
-from .forms import EventForm
-from .models import Homework, Event
-from .forms import HomeworkForm, HomeworkDetailFormSet
-from datetime import date  # ← これを追加！
-from .models import Lesson
-from django.shortcuts import redirect
-from .models import Homework, HomeworkDetail  # ← HomeworkDetail を追加！
-from .models import LessonTemplate
-from .models import Subject
-from django.shortcuts import get_object_or_404
-from .models import HomeworkSubjectTemplate  # ← ファイルの先頭に追加
-from .models import HomeworkCourse  # ← 追加
-from .models import HomeworkProblemType  # ← 忘れずに追加！
-from .models import HomeworkProblemCountSetting 
-from django.db import connection  # ← 追加する
+
 
 
 
@@ -131,14 +151,7 @@ def homework_create_view(request):
     })
 
 
-from django.utils import timezone
 
-
-from django.shortcuts import render
-from django.utils import timezone
-from collections import defaultdict
-from datetime import datetime, timedelta, date
-from .models import HomeworkDetail, Lesson, Event
 
 def get_second_sunday(year, month):
     d = date(year, month, 1)
@@ -225,7 +238,7 @@ def weekly_view(request):
                 if ':' in line:
                     try:
                         day_str, task = line.split(':', 1)
-                        day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                        day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
                         if start_date <= day <= end_date:
                             homeworks_by_day[day].append({'detail': detail, 'task': task.strip()})
                     except ValueError:
@@ -252,17 +265,11 @@ def weekly_view(request):
 
 
 
-from django.shortcuts import render, redirect
-from .models import Event, EventTemplate
-import datetime
-from collections import defaultdict
-from .models import Lesson, HomeworkDetail
-
 def add_event_view(request):
-    today = datetime.date.today()
-    week_start = today - datetime.timedelta(days=today.weekday())
-    start_date = week_start - datetime.timedelta(weeks=1)
-    calendar_days = [start_date + datetime.timedelta(days=i) for i in range(35)]
+    today = date.today()
+    week_start = today - timedelta(days=today.weekday())
+    start_date = week_start - timedelta(weeks=1)
+    calendar_days = [start_date + timedelta(days=i) for i in range(35)]
 
     templates = EventTemplate.objects.filter(user=request.user)
 
@@ -280,7 +287,7 @@ def add_event_view(request):
             for line in detail.scheduled_task.splitlines():
                 if ": " in line:
                     day_str, task = line.split(": ", 1)
-                    day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                    day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
                     if calendar_days[0] <= day <= calendar_days[-1]:
                         homeworks_by_day[day].append({'detail': detail, 'task': task})
 
@@ -390,7 +397,7 @@ def summary_view(request):
                 if ": " not in line:
                     continue  # 空行や不正行をスキップ！
                 day_str, task = line.split(": ", 1)
-                day = datetime.datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
                 summary_data.append({
                     'date': day,
                     'subject': detail.homework.get_subject_display(),
@@ -501,11 +508,6 @@ def delete_lesson(request, lesson_id):
     return redirect('add_lesson')
 
 
-
-from .models import LessonTemplate
-from .forms import LessonTemplateForm
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def add_lesson_template_view(request):
     # ユーザーのテンプレート一覧
@@ -531,9 +533,6 @@ def add_lesson_template_view(request):
         'course_choices': course_choices,  # ←★ 追加！
     })
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def delete_lesson_template(request, template_id):
     template = get_object_or_404(LessonTemplate, id=template_id, user=request.user)
@@ -541,9 +540,7 @@ def delete_lesson_template(request, template_id):
     return redirect('add_lesson_template')
 
 
-from django.shortcuts import render, redirect
-from django.contrib.auth import login
-from .forms import SignUpForm
+
 
 def signup_view(request):
     if request.method == 'POST':
@@ -557,18 +554,13 @@ def signup_view(request):
 
     return render(request, 'homework/signup.html', {'form': form})
 
-from django.shortcuts import redirect
-from django.contrib.auth.decorators import login_required
-
 def home_view(request):
     if request.user.is_authenticated:
         return redirect('weekly_view')  # ログインしてたらカレンダーへ
     else:
         return redirect('login')  # 未ログインならログインページへ
 
-from .models import EventTemplate
-from .forms import EventTemplateForm
-from django.shortcuts import redirect
+
 
 def add_event_template_view(request):
     templates = EventTemplate.objects.filter(user=request.user)  # 🔥 これ追加！
@@ -590,18 +582,14 @@ def add_event_template_view(request):
 
 # homework/views.py
 
-from django.shortcuts import get_object_or_404, redirect
-from .models import EventTemplate
+
 
 def delete_event_template_view(request, template_id):
     template = get_object_or_404(EventTemplate, id=template_id, user=request.user)
     template.delete()
     return redirect('add_event_template')
 
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
-from .models import Subject
-from .forms import SubjectForm
+
 
 @login_required
 def subject_template_list(request):
@@ -622,10 +610,7 @@ def subject_template_list(request):
         'subjects': subjects
     })
     
-    
-from .models import Course
-from .forms import CourseForm  # このフォームは後で作成します
-
+  
 @login_required
 def course_template_list(request):
     courses = Course.objects.filter(user=request.user)
@@ -651,8 +636,7 @@ def delete_subject(request, pk):
     subject.delete()
     return redirect('subject_template_list')
 
-from django.shortcuts import get_object_or_404, redirect
-from .models import Course
+
 
 @login_required
 def delete_course(request, pk):
@@ -660,10 +644,6 @@ def delete_course(request, pk):
     course.delete()
     return redirect('course_template_list')
 
-# homework/views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import HomeworkSubjectTemplate
-from .forms import HomeworkSubjectTemplateForm  # 🔥 追加
 
 def homework_subject_template_list(request):
     templates = HomeworkSubjectTemplate.objects.all()
@@ -688,9 +668,6 @@ def delete_homework_subject_template(request, pk):
     return redirect('homework_subject_template_list')
 
 
-from .models import HomeworkCourse
-from .forms import HomeworkCourseForm
-
 def homework_course_template_list(request):
     courses = HomeworkCourse.objects.all()
 
@@ -714,8 +691,6 @@ def delete_homework_course(request, pk):
     return redirect('homework_course_template_list')
 
 
-from .models import HomeworkProblemType
-from .forms import HomeworkProblemTypeForm
 
 def homework_problem_type_template_list(request):
     types = HomeworkProblemType.objects.all()
@@ -739,8 +714,6 @@ def delete_homework_problem_type(request, pk):
     return redirect('homework_problem_type_template_list')
 
 
-from .models import HomeworkProblemCountSetting
-from .forms import HomeworkProblemCountSettingForm
 
 def homework_problem_count_setting_view(request):
     latest = HomeworkProblemCountSetting.objects.last()
@@ -760,3 +733,671 @@ def homework_problem_count_setting_view(request):
 
 
 
+
+
+def homework_wizard_step1(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        print('subject:', subject)  # 科目IDを確認
+
+        if subject:
+            # セッションに科目IDを保存
+            request.session["subject"] = subject
+            print("subjectを受け取りました",subject)
+                # 次のステップに進む
+            print(f"Redirecting to {reverse('homework_wizard_step2')}")  # リダイレクト先URLの確認
+            return redirect('homework_wizard_step2')
+
+            # 次のステップに進む
+            return redirect('homework_wizard_step2')
+        else:
+            # subject がない場合のエラーメッセージ
+            print("subject is not provided")
+            return render(request, 'homework/wizard_step1.html', {
+                'error': '科目を選択してください。',
+                'homework_subject_templates': HomeworkSubjectTemplate.objects.all(),
+            })
+
+    return render(request, 'homework/wizard_step1.html', {
+        'homework_subject_templates': HomeworkSubjectTemplate.objects.all(),
+    })
+
+
+
+def homework_wizard_step2(request):
+    # セッションに科目がなければ、step1に戻る
+    if 'subject' not in request.session:
+        return redirect('homework_wizard_step1')
+
+
+########
+    # セッションからsubjectを取得
+    subject_id = request.session['subject']
+    print("subject_id",subject_id)
+    try:
+        selected_subject = HomeworkSubjectTemplate.objects.get(id=subject_id)
+        print("selected_subject",selected_subject)
+        
+    except HomeworkSubjectTemplate.DoesNotExist:
+        selected_subject = None
+        print("selected_subject779",selected_subject)
+########
+
+    if request.method == 'POST':
+        # コースをPOSTで受け取る
+        selected_course_id = request.POST.get('course')
+        print("POSTで受け取ったcourse:", selected_course_id)
+
+        if selected_course_id and HomeworkCourse.objects.filter(id=selected_course_id).exists():
+            # courseをセッションに保存
+            request.session['course'] = selected_course_id
+            print(f"courseをセッションに保存しました: {selected_course_id}")
+
+            # 次のステップに進む
+            return redirect('homework_wizard_step3')
+        else:
+            print("courseが選ばれていないか、存在しません")
+    
+    courses = HomeworkCourse.objects.all()
+    return render(request, 'homework/wizard_step2.html', {
+        'courses': courses,
+        'selected_subject': selected_subject,  # ← ここを追加
+    })
+    
+    
+def homework_wizard_step3(request):
+    if 'course' not in request.session:
+        return redirect('homework_wizard_step2')
+
+
+########
+    # セッションからsubjectを取得
+    subject_id = request.session['subject']
+    course_id = request.session['course']
+    
+    print("subject_id",subject_id)
+    print("course_id",course_id)
+    
+    try:
+        selected_subject = HomeworkSubjectTemplate.objects.get(id=subject_id)
+    except HomeworkSubjectTemplate.DoesNotExist:
+        selected_subject = None
+
+    try:
+        selected_course = HomeworkCourse.objects.get(id=course_id)
+    except HomeworkCourse.DoesNotExist:
+        selected_course = None
+        
+    print("selected_subject779",selected_subject)
+    print("selected_course779",selected_course)
+########
+
+
+    # DBから科目とコースを取得（存在しなければNone）
+
+    if request.method == 'POST':
+        selected_type = request.POST.get('problem_type')
+        print("POSTで受け取ったtype:", selected_type)
+        
+        if selected_type:
+            request.session['problem_type'] = selected_type
+            return redirect('homework_wizard_step4')
+
+    problem_types = HomeworkProblemType.objects.all()
+
+
+    return render(request, 'homework/wizard_step3.html', {
+        'problem_types': problem_types,
+        'selected_subject': selected_subject,
+        'selected_course': selected_course,
+    })
+
+
+def homework_wizard_step4(request):
+    if 'problem_type' not in request.session:
+        return redirect('homework_wizard_step3')  # 問題タイプ未選択なら戻す
+
+########
+    # セッションからsubjectを取得
+    subject_id = request.session['subject']
+    course_id = request.session['course']
+    problem_type_id = request.session['problem_type']
+    
+    print("subject_id",subject_id)
+    print("course_id",course_id)
+    print("problem_type_id",problem_type_id)
+    
+    try:
+        selected_subject = HomeworkSubjectTemplate.objects.get(id=subject_id)
+    except HomeworkSubjectTemplate.DoesNotExist:
+        selected_subject = None
+
+    try:
+        selected_course = HomeworkCourse.objects.get(id=course_id)
+    except HomeworkCourse.DoesNotExist:
+        selected_course = None
+        
+    try:
+        selected_problem_type = HomeworkProblemType.objects.get(id=problem_type_id)
+    except HomeworkProblemType.DoesNotExist:
+        selected_problem_type = None
+        
+    print("selected_subject779",selected_subject)
+    print("selected_course779",selected_course)
+########
+
+    if request.method == 'POST':
+        selected_count = request.POST.get('problem_count')
+        print("POSTで受け取ったcount:", selected_count)
+        if selected_count:
+            request.session['problem_count'] = selected_count
+            return redirect('homework_wizard_step5')
+
+    # 最大問題数の設定（例：DBから取得、またはデフォルト30）
+    from .models import HomeworkProblemCountSetting
+    setting = HomeworkProblemCountSetting.objects.last()
+    max_count = setting.max_count if setting else 30
+
+
+    return render(request, 'homework/wizard_step4.html', {
+            'range_1_max': range(1, max_count + 1),
+            'selected_problem_type': selected_problem_type,
+            'selected_subject': selected_subject,
+            'selected_course': selected_course,
+        })
+
+
+
+
+def homework_wizard_step5(request):
+    if 'problem_count' not in request.session:  # ✅ キー名を正しく
+        return redirect('homework_wizard_step4')
+
+#######
+    # セッションからsubjectを取得
+    subject_id = request.session['subject']
+    course_id = request.session['course']
+    problem_type_id = request.session['problem_type']
+    problem_count_id = request.session['problem_count'] 
+    
+    print("subject_id",subject_id)
+    print("course_id",course_id)
+    print("problem_type_id",problem_type_id)
+    print("problem_count_id",problem_count_id)
+    
+    try:
+        selected_subject = HomeworkSubjectTemplate.objects.get(id=subject_id)
+    except HomeworkSubjectTemplate.DoesNotExist:
+        selected_subject = None
+
+    try:
+        selected_course = HomeworkCourse.objects.get(id=course_id)
+    except HomeworkCourse.DoesNotExist:
+        selected_course = None
+        
+    try:
+        selected_problem_type = HomeworkProblemType.objects.get(id=problem_type_id)
+    except HomeworkProblemType.DoesNotExist:
+        selected_problem_type = None
+        
+   
+    selected_count = request.session.get('problem_count')
+
+
+        
+    print("selected_count946",selected_count)
+    print("selected_course779",selected_course)
+########
+
+
+    if request.method == 'POST':
+        selected_cycles = request.POST.get('cycles')
+        print("POSTで受け取ったcycles:", selected_cycles)
+        if selected_cycles:
+            request.session['cycles'] = selected_cycles
+            return redirect('homework_wizard_step6')
+
+
+
+    return render(request, 'homework/wizard_step5.html', {
+            'selected_problem_type': selected_problem_type,
+            'selected_subject': selected_subject,
+            'selected_course': selected_course,
+            'selected_count': selected_count,
+        })
+
+
+# Step6: 日付選択
+def homework_wizard_step6(request):
+    #######
+    # セッションからsubjectを取得
+    subject_id = request.session['subject']
+    course_id = request.session['course']
+    problem_type_id = request.session['problem_type']
+    problem_count_id = request.session['problem_count'] 
+    cycle_id = request.session['cycles'] 
+    
+    print("subject_id",subject_id)
+    print("course_id",course_id)
+    print("problem_type_id",problem_type_id)
+    print("problem_count_id",problem_count_id)
+    print("cycle_id",cycle_id)
+    
+    try:
+        selected_subject = HomeworkSubjectTemplate.objects.get(id=subject_id)
+    except HomeworkSubjectTemplate.DoesNotExist:
+        selected_subject = None
+
+    try:
+        selected_course = HomeworkCourse.objects.get(id=course_id)
+    except HomeworkCourse.DoesNotExist:
+        selected_course = None
+        
+    try:
+        selected_problem_type = HomeworkProblemType.objects.get(id=problem_type_id)
+    except HomeworkProblemType.DoesNotExist:
+        selected_problem_type = None
+        
+   
+    selected_count = request.session.get('problem_count')
+    selected_cycle = request.session.get('cycles')
+    
+
+
+
+        
+    print("selected_count946",selected_count)
+    print("selected_course779",selected_course)
+########
+    if request.method == 'POST':
+        request.session['subject'] = request.POST.get('subject')
+        request.session['course'] = request.POST.get('course')
+        request.session['problem_type'] = request.POST.get('problem_type')
+        request.session['problem_count'] = request.POST.get('problem_count')
+        print("kokoha?",request.session['problem_count'] )
+        request.session['cycles'] = request.POST.get('cycles')
+        selected_dates = request.POST.get('selected_dates')
+        if selected_dates:
+            request.session['selected_dates'] = selected_dates.split(',')
+            return redirect('homework_wizard_step7')
+
+    # 📅 カレンダー表示：当週の月曜から35日分
+    today = timezone.localdate()
+    monday = today - timedelta(days=today.weekday())
+    calendar_days = [monday + timedelta(days=i) for i in range(35)]
+
+    # 🔽 授業・宿題・イベントを日付ごとにまとめる
+    events_by_day = defaultdict(list)
+    for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        events_by_day[ev.date].append(ev)
+
+    lessons_by_day = defaultdict(list)
+    for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        lessons_by_day[lesson.date].append(lesson)
+
+    homeworks_by_day = defaultdict(list)
+    for detail in HomeworkDetail.objects.all():
+        if detail.scheduled_task:
+            for line in detail.scheduled_task.splitlines():
+                if ": " in line:
+                    day_str, task = line.split(": ", 1)
+                    day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                    if calendar_days[0] <= day <= calendar_days[-1]:
+                        homeworks_by_day[day].append({'detail': detail, 'task': task})
+
+    context = {
+        'calendar_days': calendar_days,
+        'today': today,
+        'events_by_day': events_by_day,
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+        'subject': request.session.get('subject'),
+        'course': request.session.get('course'),
+        'problem_type': request.session.get('problem_type'),
+        'problem_count': request.session.get('problem_count'),
+        'cycles': request.session.get('cycles'),
+        'selected_problem_type': selected_problem_type,
+        'selected_subject': selected_subject,
+        'selected_course': selected_course,
+        'selected_count': selected_count,
+    }
+    return render(request, 'homework/wizard_step6.html', context)
+
+def homework_wizard_step7(request):
+    # セッションから必要なデータを取得
+    subject_id = request.session.get('subject')
+    course_id = request.session.get('course')
+    problem_type_id = request.session.get('problem_type')
+    problem_count = int(request.session.get('problem_count', 0))
+    cycles = int(request.session.get('cycles', 0))
+    selected_dates = request.session.get('selected_dates', [])
+    
+    
+    # セッションデータの整合性チェック
+    if not all([subject_id, course_id, problem_type_id, problem_count, cycles, selected_dates]):
+        return redirect('homework_wizard_step1')
+
+
+    # ID → 名前に変換（ここが追加ポイント！）
+    try:
+        subject_obj = HomeworkSubjectTemplate.objects.get(id=subject_id)
+        course_obj = HomeworkCourse.objects.get(id=course_id)
+        problem_type_obj = HomeworkProblemType.objects.get(id=problem_type_id)
+    except (HomeworkSubjectTemplate.DoesNotExist, HomeworkCourse.DoesNotExist, HomeworkProblemType.DoesNotExist):
+        return redirect('homework_wizard_step1')
+  
+
+    subject_name = subject_obj.name
+    course_name = course_obj.name
+    problem_type_name = problem_type_obj.name    
+    
+        # 🔥 ここから POST処理を追加！
+    if request.method == 'POST':
+        # 宿題本体を保存
+        homework = Homework.objects.create(subject=subject_name)
+
+        # 詳細を保存
+        detail = HomeworkDetail.objects.create(
+            homework=homework,
+            course=course_name,
+            problem_type=problem_type_name,
+            problem_count=problem_count,
+        )
+
+        # タスクを文字列にして保存
+        raw_tasks = distribute_homework(problem_count, selected_dates, cycles)
+        scheduled_summary = "\n".join([f"{date}: {task}" for date, task in raw_tasks])
+        detail.scheduled_task = scheduled_summary
+        detail.save()
+
+        # セッションクリア（オプション）
+        for key in ['subject', 'course', 'problem_type', 'problem_count', 'cycles', 'selected_dates']:
+            request.session.pop(key, None)
+
+        # カレンダーへリダイレクト
+        return redirect('weekly_view')
+
+    # カレンダー表示のための日付設定
+    today = timezone.localdate()
+    monday = today - timedelta(days=today.weekday())
+    calendar_days = [monday + timedelta(days=i) for i in range(35)]
+
+    # 授業、宿題、イベントのデータ
+    events_by_day = defaultdict(list)
+    for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        events_by_day[ev.date].append(ev)
+
+    lessons_by_day = defaultdict(list)
+    for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        lessons_by_day[lesson.date].append(lesson)
+
+    homeworks_by_day = defaultdict(list)
+    for detail in HomeworkDetail.objects.all():
+        if detail.scheduled_task:
+            for line in detail.scheduled_task.splitlines():
+                if ": " in line:
+                    day_str, task = line.split(": ", 1)
+                    day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                    if calendar_days[0] <= day <= calendar_days[-1]:
+                        homeworks_by_day[day].append({'detail': detail, 'task': task})
+
+    # タスクを生成（元のデータ構造：[(date, task内容)]）
+    raw_tasks = distribute_homework(problem_count, selected_dates, cycles)
+
+    # 科目・コース情報を追加した辞書形式に整形
+    scheduled_tasks = [
+        {
+            'date': date,
+            'task': task,
+            'subject': subject_name,
+            'course': course_name
+        }
+        for date, task in raw_tasks
+    ]
+
+
+
+    
+    # タスクを日付ごとにまとめる（変更後のdict形式に対応）
+    tasks_by_date = defaultdict(list)
+    for task in scheduled_tasks:
+        tasks_by_date[task['date']].append(task)
+            
+
+    # コンテキストに名前を渡す
+    context = {
+        'subject': subject_name,
+        'course': course_name,
+        'problem_type': problem_type_name,
+        'problem_count': problem_count,
+        'cycles': cycles,
+        'selected_dates': selected_dates,
+        'calendar_days': calendar_days,
+        'events_by_day': events_by_day,
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+        'scheduled_tasks': scheduled_tasks,
+        'today': today,
+    }
+
+    return render(request, 'homework/wizard_step7.html', context)
+
+
+
+
+def add_event_step1(request):
+    templates = EventTemplate.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if name:
+            request.session['event_name'] = name
+            return redirect('add_event_step2')
+
+    return render(request, 'homework/add_event_step1.html', {
+        'templates': templates,
+    })
+
+def add_event_step2(request):
+    event_name = request.session.get('event_name')
+    
+    if 'event_name' not in request.session:
+        return redirect('add_event_step1')
+
+    today = date.today()
+    week_start = today - timedelta(days=today.weekday())
+    start_date = week_start - timedelta(weeks=1)
+    calendar_days = [start_date + timedelta(days=i) for i in range(35)]
+
+    events_by_day = defaultdict(list)
+    for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        events_by_day[ev.date].append(ev)
+
+    lessons_by_day = defaultdict(list)
+    for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        lessons_by_day[lesson.date].append(lesson)
+
+    homeworks_by_day = defaultdict(list)
+    for detail in HomeworkDetail.objects.all():
+        if detail.scheduled_task:
+            for line in detail.scheduled_task.splitlines():
+                if ": " in line:
+                    day_str, task = line.split(": ", 1)
+                    day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                    if calendar_days[0] <= day <= calendar_days[-1]:
+                        homeworks_by_day[day].append({'detail': detail, 'task': task})
+
+    if request.method == 'POST':
+        selected_date = request.POST.get('selected_date')
+        if selected_date:
+            request.session['event_date'] = selected_date
+            return redirect('add_event_step3')
+
+    return render(request, 'homework/add_event_step2.html', {
+        'calendar_days': calendar_days,
+        'events_by_day': events_by_day,
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+        'today': today,
+        'event_name': event_name,  # ← 追加
+    })
+    
+    
+def add_event_step3(request):
+    event_name = request.session.get('event_name')
+    event_date = request.session.get('event_date')
+
+    if not event_name or not event_date:
+        return redirect('add_event_step1')
+
+    if request.method == 'POST':
+        Event.objects.create(
+            user=request.user,
+            name=event_name,
+            date=event_date
+        )
+        # セッションから削除（後始末）
+        for key in ['event_name', 'event_date']:
+            request.session.pop(key, None)
+
+        return redirect('weekly_view')
+
+    return render(request, 'homework/add_event_step3.html', {
+        'event_name': event_name,
+        'event_date': event_date,
+    })
+
+from django.shortcuts import render, redirect
+from .models import LessonTemplate
+
+def lesson_wizard_step1(request):
+    templates = LessonTemplate.objects.filter(user=request.user)
+
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        course = request.POST.get('course')
+        start_time = request.POST.get('start_time')
+        end_time = request.POST.get('end_time')
+
+        if subject and course and start_time and end_time:
+            request.session['lesson_subject'] = subject
+            request.session['lesson_course'] = course
+            request.session['lesson_start_time'] = start_time
+            request.session['lesson_end_time'] = end_time
+            return redirect('lesson_wizard_step2')
+
+    return render(request, 'homework/lesson_wizard_step1.html', {
+        'templates': templates,
+    })
+
+from datetime import timedelta, datetime
+from django.utils import timezone
+from collections import defaultdict
+from .models import Lesson, Event, HomeworkDetail
+
+def lesson_wizard_step2(request):
+    # セッションから取得
+    subject_id = request.session.get('lesson_subject')
+    course_id = request.session.get('lesson_course')
+    start_time = request.session.get('lesson_start_time')
+    end_time = request.session.get('lesson_end_time')
+    # ✅ Step1のデータがなければ戻す
+    if not all(k in request.session for k in ['lesson_subject', 'lesson_course', 'lesson_start_time', 'lesson_end_time']):
+        return redirect('lesson_wizard_step1')
+    
+    # 名前に変換
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        course = Course.objects.get(id=course_id)
+    except (Subject.DoesNotExist, Course.DoesNotExist):
+        return redirect('lesson_wizard_step1')
+
+
+
+    if request.method == 'POST':
+        raw_dates = request.POST.get('selected_dates')
+        if raw_dates:
+            selected_dates = [date.strip() for date in raw_dates.split(',') if date.strip()]
+            request.session['lesson_selected_dates'] = selected_dates
+            return redirect('lesson_wizard_step3')
+
+    # カレンダー表示：今週の月曜から35日分
+    today = timezone.localdate()
+    monday = today - timedelta(days=today.weekday())
+    calendar_days = [monday + timedelta(days=i) for i in range(35)]
+
+    events_by_day = defaultdict(list)
+    for ev in Event.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        events_by_day[ev.date].append(ev)
+
+    lessons_by_day = defaultdict(list)
+    for lesson in Lesson.objects.filter(date__range=(calendar_days[0], calendar_days[-1])):
+        lessons_by_day[lesson.date].append(lesson)
+
+    homeworks_by_day = defaultdict(list)
+    for detail in HomeworkDetail.objects.all():
+        if detail.scheduled_task:
+            for line in detail.scheduled_task.splitlines():
+                if ": " in line:
+                    day_str, task = line.split(": ", 1)
+                    day = datetime.strptime(day_str.strip(), "%Y-%m-%d").date()
+                    if calendar_days[0] <= day <= calendar_days[-1]:
+                        homeworks_by_day[day].append({'detail': detail, 'task': task})
+
+    context = {
+        'subject': subject,
+        'course': course,
+        'start_time': start_time,
+        'end_time': end_time,
+        'calendar_days': calendar_days,
+        'today': today,
+        'events_by_day': events_by_day,
+        'lessons_by_day': lessons_by_day,
+        'homeworks_by_day': homeworks_by_day,
+    }
+    return render(request, 'homework/lesson_wizard_step2.html', context)
+
+from .models import Subject, Course, Lesson
+
+def lesson_wizard_step3(request):
+    # セッションから取得
+    subject_id = request.session.get('lesson_subject')
+    course_id = request.session.get('lesson_course')
+    start_time = request.session.get('lesson_start_time')
+    end_time = request.session.get('lesson_end_time')
+    selected_dates = request.session.get('lesson_selected_dates', [])
+
+    if not all([subject_id, course_id, start_time, end_time, selected_dates]):
+        return redirect('lesson_wizard_step1')
+
+    # 名前に変換
+    try:
+        subject = Subject.objects.get(id=subject_id)
+        course = Course.objects.get(id=course_id)
+    except (Subject.DoesNotExist, Course.DoesNotExist):
+        return redirect('lesson_wizard_step1')
+
+    if request.method == 'POST':
+        for date_str in selected_dates:
+            lesson = Lesson(
+                subject=subject,
+                course=course,
+                start_time=start_time,
+                end_time=end_time,
+                date=date_str
+            )
+            lesson.save()
+
+        # セッションクリア（任意）
+        for key in ['lesson_subject', 'lesson_course', 'lesson_start_time', 'lesson_end_time', 'lesson_selected_dates']:
+            request.session.pop(key, None)
+
+        return redirect('weekly_view')  # カレンダー画面に戻る
+
+    return render(request, 'homework/lesson_wizard_step3.html', {
+        'subject': subject,
+        'course': course,
+        'start_time': start_time,
+        'end_time': end_time,
+        'selected_dates': selected_dates,
+    })
