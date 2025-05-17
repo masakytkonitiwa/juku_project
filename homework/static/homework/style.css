@@ -62,31 +62,7 @@ button:active {
     transform: scale(0.98);
 }
 
-/* テーブル型カレンダー（使用されていれば） */
-table {
-    border-collapse: collapse;
-    width: 100%;
-    margin: 2rem auto;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    border-radius: 12px;
-    overflow: hidden;
-}
-
-th, td {
-    border: 1px solid #e0e0e0;
-    padding: 1rem;
-    vertical-align: top;
-    text-align: left;
-    min-height: 120px;
-}
-
-th {
-    background-color: #f5f5f5;
-    font-weight: 600;
-    text-align: center;
-}
-
-/* 改善されたカレンダー（div形式） */
+/* カレンダー（div型） */
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
@@ -104,6 +80,7 @@ th {
     position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: background-color 0.2s, box-shadow 0.2s;
+    text-align: left;
 }
 
 .day:hover {
@@ -122,14 +99,13 @@ th {
     border: 2px solid #fdd835;
 }
 
-/* 日付ラベル */
 .date-label {
     font-weight: bold;
     font-size: 1.1rem;
     margin-bottom: 6px;
 }
 
-/* 各イベントの表示 */
+/* カレンダー内アイテム */
 .event-item,
 .lesson-item,
 .homework-box {
@@ -166,16 +142,20 @@ th {
 /* テンプレートボタン */
 .template-button {
     display: inline-block;
-    padding: 12px 20px;
+    padding: 24px;
     margin: 5px;
     border: 2px solid #4CAF50;
-    border-radius: 8px;
+    border-radius: 10px;
     background-color: white;
     color: #4CAF50;
     font-weight: bold;
-    font-size: 1.1rem;
+    font-size: 1.6rem;
     cursor: pointer;
+    text-align: center;
     transition: all 0.3s ease;
+    width: 100%;
+    max-width: 700px;
+    box-sizing: border-box;
 }
 
 .template-button:hover,
@@ -185,75 +165,36 @@ th {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-/* 見出し */
+/* 次へ進むボタン */
+.next-button {
+    font-size: 1.6rem;
+    padding: 1rem 2.5rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.next-button:hover {
+    background-color: #45a049;
+}
+
+/* タイトル */
 h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 2.2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
+    font-weight: bold;
 }
 
 h2 {
     font-size: 1.5rem;
     margin-top: 1.5rem;
     text-align: center;
-}
-
-/* ナビゲーション／戻るボタン */
-.header-right {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    padding: 1rem;
-    font-size: 1rem;
-}
-
-.back-button {
-    display: inline-block;
-    padding: 10px 18px;
-    background-color: #607d8b;
-    color: white;
-    border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.1rem;
-    transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-    background-color: #546e7a;
-}
-
-/* モバイル対応 */
-@media (max-width: 500px) {
-    .form-container {
-        margin: 20px;
-        padding: 16px;
-    }
-
-    .template-button,
-    .subject-button, .cycle-button, .course-button,
-    .problem-type-button, .problem-count-button {
-        font-size: 1.1rem;
-        padding: 12px 18px;
-    }
-}
-
-.calendar-wrapper {
-    overflow-x: auto;
-    width: 100%;
-}
-
-button[type="submit"] {
-    padding: 1rem 2rem;
-    font-size: 1.5em;
-    font-weight: bold;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    transition: background-color 0.3s, transform 0.1s;
 }
 
 /* ボタングループ：中央寄せ＋縦並び */
@@ -350,6 +291,47 @@ button[type="submit"] {
 
 .arrow-steps .step.current {
     box-shadow: 0 0 10px rgba(56, 161, 105, 0.8);
+}
+
+/* 戻るボタンなど */
+.back-button {
+    display: inline-block;
+    padding: 10px 18px;
+    background-color: #607d8b;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #546e7a;
+}
+
+/* モバイル対応 */
+@media (max-width: 500px) {
+    .form-container {
+        margin: 20px;
+        padding: 16px;
+    }
+
+    .template-button,
+    .subject-button, .cycle-button, .course-button,
+    .problem-type-button, .problem-count-button {
+        font-size: 1.2rem;
+        padding: 16px;
+    }
+
+    .next-button {
+        font-size: 1.3rem;
+    }
+}
+
+.calendar-wrapper {
+    overflow-x: auto;
+    width: 100%;
 }
 
 .selected {
