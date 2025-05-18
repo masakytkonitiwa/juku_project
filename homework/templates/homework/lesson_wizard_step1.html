@@ -30,7 +30,7 @@
                 data-course="{{ template.course.id }}"
                 data-start="{{ template.start_time }}"
                 data-end="{{ template.end_time }}">
-                {{ template.subject.name }} / {{ template.course.name }}
+                {{ template.subject.name }} / {{ template.course.name }}<br>
                 {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
             </button>
         {% empty %}
