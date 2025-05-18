@@ -59,6 +59,18 @@ button {
     transition: background 0.3s;
 }
 
+/* ========== ボタングループ ========== */
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+}
+
 button:hover {
     background-color: #45a049;
 }
@@ -69,27 +81,24 @@ button:active {
 
 .next-button,
 .back-button {
-    font-size: 1.2rem;
+    font-size: 2.0rem;
     padding: 1rem 2rem;
     border-radius: 8px;
     font-weight: bold;
-}
-
-.back-button {
-    background-color: #607d8b;
-}
-
-.back-button:hover {
-    background-color: #546e7a;
-}
-
-.next-button {
     background-color: #4CAF50;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+
+.back-button:hover {
+    background-color: #342286;
+}
+
+
+
+
 .next-button:hover {
-    background-color: #45a049;
+    background-color: #430f6d;
 }
 
 /* ========== カレンダー ========== */
@@ -177,22 +186,31 @@ button:active {
 .subject-other { background-color: #eeeeee; }
 
 /* ========== テンプレート選択ボタン ========== */
+.subject-button,
+.course-button,
 .template-button {
-    padding: 20px;
+    padding:  1.5rem;
     margin: 5px auto;
     border: 2px solid #4CAF50;
     border-radius: 10px;
     background-color: white;
     color: #4CAF50;
     font-weight: bold;
-    font-size: 1.4rem;
+    font-size: 2.0rem;
     width: 100%;
     max-width: 700px;
     text-align: center;
     transition: all 0.3s ease;
+    display: block; /* または flex, 上下左右調整するなら */
+    margin: 0 auto;
+    text-align: center;
 }
 
+.subject-button:hover,
+.course-button:hover,
 .template-button:hover,
+.course-button.selected,
+.subject-button.selected,
 .template-button.selected {
     background-color: #4CAF50;
     color: white;
@@ -227,13 +245,14 @@ button:active {
 /* ========== 時刻入力 ========== */
 .time-input {
     padding: 14px 20px;
-    font-size: 1.2rem;
+    font-size: 2.0rem;
     border: 2px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
     width: 280px;
     display: block;
     margin: 1rem auto;
+    text-align: center;
 }
 
 /* ========== ステップバー ========== */
@@ -252,7 +271,7 @@ button:active {
     font-weight: bold;
     clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%, 10% 50%);
     transition: background 0.3s ease;
-    font-size: 1rem;
+    font-size: 2.0rem;
 }
 
 .arrow-steps .step.done,
@@ -298,8 +317,12 @@ h2 {
     .select-button,
     .next-button,
     .back-button {
-        font-size: 1.4rem;
-        padding: 1.2rem;
+        /* 既存のスタイルに加えて以下を調整 */
+        word-break: break-word;
+        white-space: normal;   /* ← 特にこれが重要 */
+        line-height: 1.4;
+        font-size: 2.5rem;
+        padding: 1.8rem;
     }
 
     .time-input {
@@ -312,3 +335,47 @@ img, table {
     max-width: 100%;
     height: auto;
 }
+
+
+.button-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* ← ここが中央寄せのポイント */
+    justify-content: center;
+    gap: 1.5rem;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto 2rem auto;
+}
+
+/* ヘッダー右寄せレイアウト */
+.header-right {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 1rem;
+}
+
+/* ユーザー情報エリア（中央揃え＋間隔） */
+.user-info {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    font-size: 2.0rem;
+}
+
+/* ログアウトボタン風リンク */
+.logout-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    font-weight: bold;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #45a049;
+}
+

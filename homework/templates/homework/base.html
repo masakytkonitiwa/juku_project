@@ -18,9 +18,14 @@
 
     <header class="container header-right">
         {% if user.is_authenticated %}
-            <p>ようこそ、{{ user.username }}さん！<a href="{% url 'logout' %}">ログアウト</a></p>
+            <div class="user-info">
+                <a href="{% url 'logout' %}" class="logout-button">ログアウト</a>
+            </div>
         {% else %}
-            <p><a href="{% url 'login' %}">ログイン</a> | <a href="{% url 'signup' %}">ユーザー登録</a></p>
+            <div class="user-info">
+                <a href="{% url 'login' %}">ログイン</a> |
+                <a href="{% url 'signup' %}">ユーザー登録</a>
+            </div>
         {% endif %}
     </header>
 
@@ -28,7 +33,6 @@
         {% block content %}
         {% endblock %}
     </main>
-    
 
 
 </body>

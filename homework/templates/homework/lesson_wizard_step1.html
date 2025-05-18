@@ -13,7 +13,7 @@
     <div class="step">3</div>
 </div>
 
-<h1>授業登録ステップ①：テンプレートを選択</h1>
+<h1>授業を選択</h1>
 
 <form method="post">
     {% csrf_token %}
@@ -22,6 +22,7 @@
     <input type="hidden" name="start_time" id="id_start_time">
     <input type="hidden" name="end_time" id="id_end_time">
 
+    <!-- テンプレートボタンと同じ構造で中央揃え -->
     <div class="button-group">
         {% for template in templates %}
             <button type="button" class="template-button"
@@ -35,13 +36,17 @@
         {% empty %}
             <p>テンプレートがありません。</p>
         {% endfor %}
+    
+            <button type="button" class="template-button mt-gap"
+                    onclick="location.href='{% url 'add_lesson_template' %}'">
+                ＋ 授業を新規作成or削除
+            </button>
+    
 
-        <a href="{% url 'add_lesson_template' %}" class="template-button" style="text-decoration: none;">
-            ➕ 授業を新規作成or削除
-        </a>
     </div>
+    
 
-    <div style="text-align: center; margin-top: 2rem;">
+    <div class="text-center" ">
         <button type="submit" class="next-button">次へ進む</button>
     </div>
 </form>
