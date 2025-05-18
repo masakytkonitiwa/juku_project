@@ -388,6 +388,9 @@ img, table {
 .mt-4xl {
     margin-top: 4rem;
 }
+.mt-5xl {
+    margin-top: 5rem;
+}
 
 .text-center {
     text-align: center;
@@ -395,4 +398,7 @@ img, table {
 
 .mb-6xl {
     margin-bottom: 6rem;
+  }
+  .mb-10xl {
+    margin-bottom: 10rem;
   }
