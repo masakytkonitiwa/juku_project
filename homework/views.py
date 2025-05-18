@@ -519,7 +519,7 @@ def add_lesson_template_view(request):
             lesson_template = form.save(commit=False)
             lesson_template.user = request.user  # ユーザーをセット
             lesson_template.save()
-            return redirect('add_lesson_template')
+            return redirect('lesson_wizard_step1')
     else:
         form = LessonTemplateForm()
     # 🔽 追加：subject の選択肢を取得してテンプレートに渡す

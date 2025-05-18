@@ -82,22 +82,22 @@ button:active {
 .next-button,
 .back-button {
     font-size: 2.0rem;
-    padding: 3rem 2rem;
+    padding: 3rem 10rem;
     border-radius: 8px;
     font-weight: bold;
     font-size: 2.8rem;
+    color: #ffffff;  /* ← 好きな色に変更 */
     background-color: #4CAF50;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 
-    margin-bottom: 4rem
+    margin-top: 4rem;
+    margin-bottom: 6rem;
 }
 
 
 .back-button:hover {
     background-color: #342286;
 }
-
-
 
 
 .next-button:hover {
@@ -384,3 +384,16 @@ img, table {
     background-color: #45a049;
 }
 
+.mb-5xl {
+    margin-top: 10rem;
+    margin-bottom: 5rem;
+}
+
+.mt-4xl {
+    margin-top: 10rem;
+    margin-top: 4rem;
+}
+
+.text-center {
+    text-align: center;
+}

@@ -61,9 +61,9 @@
 
 
 
-        
-    
-        <button type="submit" class="next-button" style="margin-top: 20px;">⑤テンプレートを作成</button>
+        <div class="text-center mb-5xl">
+            <button type="submit" class="next-button" style="margin-top: 20px;">⑤テンプレートを作成</button>
+        </div>
     </form>
 
     <h2>作成済みテンプレート</h2>
@@ -88,11 +88,11 @@
         <p>まだテンプレートはありません。</p>
         {% endfor %}
     </div>
-    
-
-    <p><a href="{% url 'add_lesson' %}">← 授業登録に戻る</a></p>
-
-
+    <div class="text-center mb-5xl">
+        <a href="{% url 'lesson_wizard_step1' %}" class="back-button">
+          戻る
+        </a>
+    </div>
 
     <script>
         document.querySelectorAll('.subject-button').forEach(button => {
