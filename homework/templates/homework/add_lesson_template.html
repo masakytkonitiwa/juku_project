@@ -1,15 +1,10 @@
+{% extends 'homework/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>授業テンプレート作成</title>
-    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% block title %}授業テンプレート作成{% endblock %}
+
+{% block content %}
 
 
-</head>
-<body>
     <h1>授業テンプレート作成①〜⑤</h1>
 
     <!-- フォーム -->
@@ -138,5 +133,5 @@
         });
         </script>
         
-</body>
-</html>
+
+{% endblock %}
