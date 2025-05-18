@@ -9,7 +9,6 @@ body {
     font-family: 'Noto Sans JP', 'ヒラギノ角ゴ ProN', 'メイリオ', sans-serif;
     background-color: #f7f7f7;
     color: #333;
-    font-size: 18px;
     line-height: 1.6;
     margin: 0;
     padding: 0;
@@ -102,16 +101,27 @@ button:active {
 }
 
 /* ========== カレンダー ========== */
-.calendar-wrapper {
-    overflow-x: auto;
-    width: 100%;
+.calendar-wrapper-full {
+    width: 100vw;  /* 画面の横幅いっぱい */
+    margin-left: calc(-50vw + 50%);  /* 左右の中央寄せを解除して */
 }
 
 .calendar {
+    font-size: 2.4rem; /* 好きなサイズに調整 */
     display: grid;
     grid-template-columns: repeat(7, 1fr);
+    width: 100%;
     gap: 8px;
-    margin-top: 1rem;
+}
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    font-weight: bold;
+    text-align: center;
+    background-color: #f0f0f0;
+    padding: 0.5rem 0;
+    font-size: 2.4rem;
 }
 
 @media (max-width: 500px) {
@@ -123,11 +133,11 @@ button:active {
 .day {
     background-color: #fff;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    padding: 14px;
-    min-height: 120px;
-    font-size: 1.2rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    border-radius: 12px;
+    padding: 16px;
+    min-height: 150px;
+    font-size: 1.4rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
     transition: background-color 0.2s, box-shadow 0.2s;
 }
 
@@ -149,13 +159,13 @@ button:active {
 
 .date-label {
     font-weight: bold;
-    font-size: 1.2rem;
+    font-size: 2.4rem;
     margin-bottom: 6px;
 }
 
 /* ========== カレンダー内アイテム ========== */
 .event-item, .lesson-item, .homework-box {
-    font-size: 1rem;
+    font-size: 1.5rem;
     margin-top: 4px;
     padding: 4px 6px;
     border-radius: 4px;
@@ -402,3 +412,7 @@ img, table {
   .mb-10xl {
     margin-bottom: 10rem;
   }
+
+.text-2_8rem {
+font-size: 2.8rem !important;
+}
