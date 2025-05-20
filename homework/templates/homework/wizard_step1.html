@@ -2,8 +2,6 @@
 {% load static %}
 
 {% block title %}宿題登録 Step 1{% endblock %}
-
-<body class="text-6xl">
 {% block content %}
 <!-- ステップバー（矢印） -->
 <div class="arrow-steps">
@@ -16,14 +14,14 @@
   <div class="step">7</div>
 </div>
 
-<h2 class="text-2xl my-6">① 宿題科目を選択</h2>
+<h1>宿題科目を選択</h2>
 
 <form method="post">
   {% csrf_token %}
   <div class="button-group" id="subject-buttons">
     {% for template in homework_subject_templates %}
-    <button type="submit" name="subject" value="{{ template.id }}"
-      class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-xl">
+        <button type="submit" name="subject" value="{{ template.id }}"
+          class="template-button">
             📚 {{ template.name }}
         </button>
     {% empty %}
@@ -32,14 +30,14 @@
 
 
 
-    <!-- コース追加ボタン -->
-    <a href="{% url 'homework_subject_template_list' %}"
-       class="bg-green-400 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl w-full text-3xl text-center block">
-      ➕ 科目を追加・削除
-    </a>
+    <!-- 科目追加ボタン -->
+
+    <button type="button" class="template-button mt-gap"
+          onclick="location.href='{% url 'homework_subject_template_list' %}'">
+      ＋ 科目を追加・削除
+    </button>
+
   </div>
-
-
 </form>
 
 

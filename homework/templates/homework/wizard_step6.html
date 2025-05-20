@@ -1,10 +1,7 @@
 {% extends 'homework/base.html' %}
 {% load static %}
 {% load homework_extras %}
-
 {% block title %}宿題登録 Step 6{% endblock %}
-
-<body class="text-6xl">
 {% block content %}
 
 <!-- ステップバー -->
@@ -19,69 +16,52 @@
 </div>
 
 
-
-{% if selected_subject or selected_course or selected_problem_type %}
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-    
-    {% if selected_subject %}
-    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-      <div class="text-sm text-gray-500 mb-2">選択した科目</div>
-      <div class="text-xl font-semibold text-green-600">
-        {{ selected_subject.name }}
-      </div>
+<div class="mb-4">
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+    <div class="text-2_8rem text-gray-500 mb-4">選択した科目</div>
+    <div class="text-2_8rem  font-semibold text-green-600 leading-snug">
+      {{ selected_subject.name }}
     </div>
-    {% endif %}
+  </div>
+</div>
 
-    {% if selected_course %}
-    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-      <div class="text-sm text-gray-500 mb-2">選択したコース</div>
-      <div class="text-xl font-semibold text-blue-600">
+
+  <div class="mb-4">
+    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <div class="text-2_8rem text-gray-500 mb-4">選択したコース</div>
+      <div class="text-2_8rem  font-semibold text-green-600 leading-snug">
         {{ selected_course.name }}
       </div>
     </div>
-    {% endif %}
+  </div>
 
-    {% if selected_problem_type %}
-    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-      <div class="text-sm text-gray-500 mb-2">選択した問題タイプ</div>
-      <div class="text-xl font-semibold text-purple-600">
+
+  <div class="mb-4">
+    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <div class="text-2_8rem text-gray-500 mb-4">選択した問題タイプ</div>
+      <div class="text-2_8rem  font-semibold text-green-600 leading-snug">
         {{ selected_problem_type.name }}
       </div>
     </div>
-    {% endif %}
+  </div>
 
 
-
-    {% if selected_count %}
-    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-      <div class="text-sm text-gray-500 mb-2">選択した問題数</div>
-      <div class="text-xl font-semibold text-purple-600">
+  <div class="mb-4">
+    <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+      <div class="text-2_8rem text-gray-500 mb-4">選択した問題数</div>
+      <div class="text-2_8rem  font-semibold text-green-600 leading-snug">
         {{ selected_count }}
       </div>
     </div>
-    {% endif %}
-
-    {% if cycles %}
-    <div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-      <div class="text-sm text-gray-500 mb-2">選択した周回数</div>
-      <div class="text-xl font-semibold text-purple-600">
-        {{ cycles }}周　＋　総復習
-      </div>
-    </div>
-    {% endif %}
-
   </div>
-{% endif %}
 
 
 
 
-<h2 class="text-2xl my-6">⑥ 宿題をやる日を選択</h2>
+<h1>宿題をやる日を選択</h1>
 
 <form method="post">
   {% csrf_token %}
-
-
   <input type="hidden" name="subject" value="{{ subject }}">
   <input type="hidden" name="course" value="{{ course }}">
   <input type="hidden" name="problem_type" value="{{ problem_type }}">
@@ -89,24 +69,36 @@
   <input type="hidden" name="cycles" value="{{ cycles }}">
   <input type="hidden" name="selected_dates" id="selected_dates">
 
-  <div class="calendar">
-    {% for day in calendar_days %}
-      <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
-        {{ day|date:"m/d (D)" }}
 
-        {% for ev in events_by_day|get_item:day %}
-          <div class="bg-yellow-100 text-sm">📅 {{ ev.name }}</div>
-        {% endfor %}
-        {% for lesson in lessons_by_day|get_item:day %}
-          <div class="bg-orange-100 text-sm">
-            {{ lesson.subject.name }}/{{ lesson.course.name }}
-          </div>
-        {% endfor %}
-        {% for hw_entry in homeworks_by_day|get_item:day %}
+
+
+
+  <div class="calendar-wrapper-full">
+    <div class="calendar-header">
+      <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+    </div>
+  
+    <!-- 📌 カレンダー本体：1つの<div class="calendar">で全体を包む -->
+    <div class="calendar">
+      {% for day in calendar_days %}
+        <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
+            <div class="date-label">{{ day|date:"m/d" }}</div>
+
+  
+          {% for ev in events_by_day|get_item:day %}
+            <div class="event-item">📅 {{ ev.name }}</div>
+          {% endfor %}
+  
+          {% for lesson in lessons_by_day|get_item:day %}
+            <div class="lesson-item">🎓 {{ lesson.subject.name }} / {{ lesson.course.name }}</div>
+          {% endfor %}
+  
+          {% for hw_entry in homeworks_by_day|get_item:day %}
           <div class="bg-blue-100 text-sm">
             📋 {{ hw_entry.task }}
           </div>
         {% endfor %}
+
       </div>
       {% if forloop.counter|divisibleby:7 and not forloop.last %}
       </div><div class="calendar">
@@ -114,11 +106,12 @@
     {% endfor %}
   </div>
 
-  <div class="text-center mt-10">
-    <button type="submit" class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg">
-      次へ →
-    </button>
-  </div>
+
+  <div class="text-center mt-5xl mb-10xl">
+    <button type="submit" class="next-button">次へ進む</button>
+</div>
+
+
 </form>
 
 <!-- 戻るボタン -->
