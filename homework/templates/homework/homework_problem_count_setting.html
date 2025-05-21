@@ -1,17 +1,32 @@
 {% extends 'homework/base.html' %}
-
+{% load static %}
+{% block title %}宿題用 最大問題数の設定{% endblock %}
 {% block content %}
+
+
+
 <h1>最大問題数の設定</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">保存</button>
-</form>
 
-{% if latest %}
-    <p style="margin-top: 20px;">現在の最大問題数：<strong>{{ latest.max_count }}</strong></p>
-{% endif %}
 
-<p><a href="{% url 'add_homework' %}">← (PC用)宿題登録ページに戻る</a></p>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">保存</button>
+    </form>
+
+    {% if latest %}
+        <p style="margin-top: 20px; font-size: 2.8rem;">
+            現在の最大問題数：<strong>{{ latest.max_count }}</strong>
+        </p>
+    {% endif %}
+
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-10xl">
+    <a href="{% url 'homework_wizard_step4' %}" class="back-button">
+      ← 戻る
+    </a>
+  </div>
+
 {% endblock %}

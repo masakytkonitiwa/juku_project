@@ -1,72 +1,60 @@
+{% extends 'homework/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>イベントテンプレート作成</title>
-    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
-</head>
-<body>
-    <h1>イベントテンプレート作成</h1>
+{% block title %}イベントボタンの作成{% endblock %}
+{% block content %}
+
+
+    <h1>イベントボタンの作成</h1>
 
     <!-- フォーム -->
-    <form method="post">
+    <form method="post" >
         {% csrf_token %}
     
-        <div>
-            <label for="{{ form.subject.id_for_label }}">科目:</label>
-            {{ form.subject }}
-            {{ form.subject.errors }}
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}" class="form-label">イベント名:</label>
+            {{ form.name }}
+            {{ form.name.errors }}
         </div>
     
-        <div>
-            <label for="{{ form.course.id_for_label }}">コース:</label>
-            {{ form.course }}
-            {{ form.course.errors }}
-        </div>
-    
-        <div>
-            <label for="{{ form.start_time.id_for_label }}">開始時刻:</label>
-            {{ form.start_time }}
-            {{ form.start_time.errors }}
-        </div>
-    
-        <div>
-            <label for="{{ form.end_time.id_for_label }}">終了時刻:</label>
-            {{ form.end_time }}
-            {{ form.end_time.errors }}
-        </div>
-    
-        <button type="submit">テンプレートを作成</button>
+        <button type="submit" class="next-button">イベントボタンを作成</button>
     </form>
     
-    <h2>作成済みテンプレート</h2>
-    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+    
+    <h2 class="template-heading">作成済みテンプレート</h2>
+
+    <div class="template-list">
         {% for template in templates %}
-        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
-            <div style="font-size: 1.1em; margin-bottom: 5px;">
+        <div class="template-box">
+            <div class="template-title">
                 📅 <strong>{{ template.name }}</strong>
             </div>
     
             {% if template.start_time and template.end_time %}
-            <div>
+            <div class="template-time">
                 🕒 {{ template.start_time|time:"H:i" }}〜{{ template.end_time|time:"H:i" }}
             </div>
             {% endif %}
     
-            <div style="text-align: right; margin-top: 8px;">
-                <a href="{% url 'delete_event_template' template.id %}" style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+            <div class="template-delete">
+                <a href="{% url 'delete_event_template' template.id %}" class="delete-button">
                     ❌ 削除
                 </a>
             </div>
         </div>
         {% empty %}
-        <p>まだテンプレートはありません。</p>
+        <p class="no-template-msg">まだテンプレートはありません。</p>
         {% endfor %}
     </div>
+
+
     
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-10xl">
+    <a href="{% url 'add_event_step1' %}" class="back-button">
+      ← 戻る
+    </a>
+  </div>
 
-    <p><a href="{% url 'add_event' %}">← イベント登録に戻る</a></p>
+  {% endblock %}
 
-</body>
-</html>
+

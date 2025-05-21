@@ -1,22 +1,38 @@
 {% extends 'homework/base.html' %}
 {% load static %}
-
+{% block title %}宿題用 科目ボタンの作成{% endblock %}
 {% block content %}
-<h1>宿題用 科目テンプレート追加</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">追加</button>
-</form>
 
-<h2>登録済みの科目</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    {% for subject in subjects %}
-        <div style="border: 1px solid #ccc; border-radius: 8px; padding: 10px; width: 200px; background-color: #fff;">
-            <div style="font-size: 1.1em;">
-                📘 {{ subject.name }}
+    <h1>宿題用 科目ボタンの作成</h1>
+    <!-- フォーム -->
+    <form method="post" >
+        {% csrf_token %}
+    
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}" class="form-label">科目名:</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+    
+        <button type="submit" class="next-button">科目ボタンを作成</button>
+    </form>
+
+
+
+
+
+
+    <h2 class="template-heading">すでに作成済み科目</h2>
+
+    <div class="template-list">
+        {% for subject in subjects %}
+        <div class="template-box">
+            <div class="template-title">
+                📘  <strong>{{ subject.name }}</strong>
             </div>
+    
+
             <div style="text-align: right; margin-top: 8px;">
                 <a href="{% url 'delete_homework_subject_template' subject.pk %}" 
                    onclick="return confirm('この科目を削除しますか？')" 
@@ -30,7 +46,13 @@
     {% endfor %}
 </div>
 
-<p><a href="{% url 'add_homework' %}">← (PC用)宿題登録ページに戻る</a></p>
+    
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-10xl">
+    <a href="{% url 'homework_wizard_step1' %}" class="back-button">
+      ← 戻る
+    </a>
+  </div>
 
-<p><a href="{% url 'homework_wizard_step1' %}">← (スマホ用)STEP1に戻る</a></p>
-{% endblock %}
+
+  {% endblock %}

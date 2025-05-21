@@ -35,17 +35,41 @@ form {
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    font-size: 1.1rem;
+    font-size: 2.8rem;
 }
+
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 2.8em;
+    font-weight: bold;
+}
+
+
+form input[type="number"],
+form input[type="text"],
+form select,
+form textarea {
+    font-size: 2.8rem;
+    padding: 12px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
 
 /* ========== フォーム・ボタン ========== */
 input[type="text"],
 input[type="password"],
 button {
     width: 100%;
-    padding: 14px;
+    padding:36px;
     margin-top: 10px;
-    font-size: 1.2rem;
+    font-size: 2.8rem;
     border: 1px solid #ccc;
     border-radius: 8px;
 }
@@ -426,3 +450,59 @@ img, table {
 .text-2_8rem {
 font-size: 2.8rem !important;
 }
+
+
+
+.template-heading {
+    font-size: 3rem;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.template-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.template-box {
+    border: 2px solid #ccc;
+    border-radius: 12px;
+    padding: 20px;
+    width: 48%;
+    background-color: #fff;
+    font-size: 2.8rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+}
+
+.template-title {
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.template-time {
+    margin-bottom: 10px;
+}
+
+.template-delete {
+    text-align: right;
+}
+
+.delete-button {
+    padding: 6px 12px;
+    background-color: #f44336;
+    color: white;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 2.2rem;
+}
+
+.no-template-msg {
+    font-size: 2.8rem;
+    text-align: center;
+    margin-top: 20px;
+}
+

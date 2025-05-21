@@ -29,10 +29,20 @@
     </button>
   </div>
 
-  <div class="text-center mt-5xl mb-10xl">
+  <div class="text-center mt-5xl mb-5xl">
     <button type="submit" class="next-button">次へ進む</button>
   </div>
 </form>
+
+
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-5xl">
+  <a href="{% url 'weekly_view' %}" class="back-button">
+    ← 戻る
+  </a>
+</div>
+
+
 
 <script>
   const buttons = document.querySelectorAll('.template-button');

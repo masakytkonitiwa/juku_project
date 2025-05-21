@@ -1,28 +1,58 @@
 {% extends 'homework/base.html' %}
+{% load static %}
+{% block title %}宿題用 問題タイプの作成{% endblock %}
 {% block content %}
+
+
 
 <h1>宿題用 問題タイプ追加</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">追加</button>
-</form>
 
-<h2>登録済みの問題タイプ</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    {% for pt in problem_types %}
-        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
-            {{ pt.name }}
-            <a href="{% url 'delete_homework_problem_type' pt.pk %}"
-               onclick="return confirm('この問題タイプを削除しますか？')"
-               style="color: red; margin-left: 10px;">❌</a>
+    <!-- フォーム -->
+    <form method="post" >
+        {% csrf_token %}
+    
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}" class="form-label">問題タイプ名:</label>
+            {{ form.name }}
+            {{ form.name.errors }}
+        </div>
+    
+        <button type="submit" class="next-button">問題タイプボタンを作成</button>
+    </form>
+
+
+    <h2>すでに登録済みの問題タイプ</h2>
+
+    <div class="template-list">
+    
+        {% for pt in problem_types %}
+        <div class="template-box">
+            <div class="template-title">
+                <strong>{{ pt.name }}</strong>
+            </div>
+    
+    
+            <div style="text-align: right; margin-top: 8px;">
+                <a href="{% url 'delete_homework_problem_type' pt.pk %}"
+                   onclick="return confirm('このタイプを削除しますか？')" 
+                   style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                    ❌ 削除
+                </a>
+            </div>
         </div>
     {% empty %}
         <p>まだ問題タイプは登録されていません。</p>
     {% endfor %}
-</div>
+    </div>
+    
 
-<p><a href="{% url 'add_homework' %}">← (PC用)宿題登録ページに戻る</a></p>
+
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-10xl">
+    <a href="{% url 'homework_wizard_step3' %}" class="back-button">
+      ← 戻る
+    </a>
+  </div>
 
 {% endblock %}

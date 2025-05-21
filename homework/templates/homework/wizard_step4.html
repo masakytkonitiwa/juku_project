@@ -64,18 +64,20 @@
 
     <button type="button" class="template-button mt-gap"
           onclick="location.href='{% url 'homework_problem_count_setting' %}'">
-      ＋ 最大問題数を設定
+      ↑の選択肢の最大問題数を設定
     </button>
 
   </div>
 </form>
 
+
+
 <!-- 戻るボタン -->
-<div class="mt-10 text-center">
-  <a href="{% url 'homework_wizard_step3' %}"
-     class="bg-green-500 hover:bg-green-700 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+<div class="text-center mt-5xl mb-10xl">
+  <a href="{% url 'homework_wizard_step3' %}" class="back-button">
     ← 戻る
   </a>
 </div>
+
 {% endblock %}
 </body>

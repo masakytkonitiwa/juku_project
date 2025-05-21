@@ -1,28 +1,60 @@
 {% extends 'homework/base.html' %}
+{% load static %}
+{% block title %}宿題用 コーステンボタンの作成{% endblock %}
 {% block content %}
 
-<h1>宿題用 コーステンプレート追加</h1>
 
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">追加</button>
-</form>
 
-<h2>登録済みの宿題コース</h2>
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-    {% for course in courses %}
-        <div style="border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
-            {{ course.name }}
-            <a href="{% url 'delete_homework_course' course.pk %}"
-               onclick="return confirm('この宿題コースを削除しますか？')"
-               style="color: red; margin-left: 10px;">❌</a>
+<h1>宿題用 コースボタンの作成</h1>
+
+    <!-- フォーム -->
+    <form method="post" >
+        {% csrf_token %}
+    
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}" class="form-label">コース名:</label>
+            {{ form.name }}
+            {{ form.name.errors }}
         </div>
-    {% empty %}
-        <p>まだコースは登録されていません。</p>
-    {% endfor %}
+    
+        <button type="submit" class="next-button">コースボタンを作成</button>
+    </form>
+
+
+
+
+
+
+<h2>すでに作成済みのコース</h2>
+
+<div class="template-list">
+
+    {% for course in courses %}
+    <div class="template-box">
+        <div class="template-title">
+            📘  <strong>{{ course.name }}</strong>
+        </div>
+
+
+        <div style="text-align: right; margin-top: 8px;">
+            <a href="{% url 'delete_homework_course' course.pk %}"
+               onclick="return confirm('このコースを削除しますか？')" 
+               style="padding: 4px 8px; background-color: #f44336; color: white; border-radius: 4px; text-decoration: none; font-size: 0.9em;">
+                ❌ 削除
+            </a>
+        </div>
+    </div>
+{% empty %}
+    <p>まだコースは登録されていません。</p>
+{% endfor %}
 </div>
 
-<p><a href="{% url 'add_homework' %}">← (PC用)宿題登録ページに戻る</a></p>
+<!-- 戻るボタン -->
+<div class="text-center mt-5xl mb-10xl">
+    <a href="{% url 'homework_wizard_step2' %}" class="back-button">
+      ← 戻る
+    </a>
+  </div>
 
-{% endblock %}
+
+  {% endblock %}

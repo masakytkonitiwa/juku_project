@@ -722,7 +722,7 @@ def homework_problem_count_setting_view(request):
         form = HomeworkProblemCountSettingForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('homework_problem_count_setting')
+            return redirect('homework_wizard_step4')
     else:
         form = HomeworkProblemCountSettingForm()
 
