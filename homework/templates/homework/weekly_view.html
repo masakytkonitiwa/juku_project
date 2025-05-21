@@ -1,10 +1,8 @@
 {% extends 'homework/base.html' %}
 {% load homework_extras %}
-
 {% block title %}週間カレンダー{% endblock %}
-
 {% block content %}
-<div class="text-3xl">
+
 
 
 
@@ -17,7 +15,7 @@
   <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
     
     <!-- 🎨 日付 -->
-    <div class="text-3xl font-bold mb-2
+    <div class="text-5xl font-bold mb-2
         {% if day == today %}
             text-blue-800
         {% elif day|date:'w' == '6' %}
@@ -33,30 +31,42 @@
 
     <!-- 📅 イベント -->
     {% for ev in events_by_day|get_item:day %}
-    <div class="bg-yellow-100 rounded px-2 py-1 mb-1 text-3xl">
+    <div class="bg-yellow-100 rounded px-2 py-1 mb-1 text-5xl">
       📅 {{ ev.name }}
-      <a href="{% url 'delete_event' ev.id %}" class="text-red-500 ml-2 text-3xl">❌</a>
+  
+
+      <form method="post" action="{% url 'delete_event' ev.id %}">
+        {% csrf_token %}
+        <button type="submit" class="text-red-500 text-5xl ml-1">
+          ❌
+        </button>
+      </form>
     </div>
+    
     {% endfor %}
 
     <!-- 📘 授業 -->
     {% for lesson in lessons_by_day|get_item:day %}
-    <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-3xl">
-      📘 {{ lesson.subject.name }} / {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
+    <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-5xl">
+      授業📘 {{ lesson.subject.name }} / {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
 
     </div>
     {% endfor %}
 
     <!-- 📋 宿題 -->
     {% for hw_entry in homeworks_by_day|get_item:day %}
-    <div class="bg-green-100 rounded px-2 py-1 mb-1 text-3xl">
+    <div class="bg-green-100 rounded px-2 py-1 mb-1 text-5xl">
       📚 {{ hw_entry.detail.homework.get_subject_display }}<br>
       🏫 {{ hw_entry.detail.get_course_display }}<br>
       📋 {{ hw_entry.task }}
+
       <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}">
         {% csrf_token %}
-        <button type="submit" class="text-red-500 text-3xl ml-1">❌</button>
+        <button type="submit" class="text-red-500 text-5xl ml-1">
+          ❌
+        </button>
       </form>
+
     </div>
     {% endfor %}
 
