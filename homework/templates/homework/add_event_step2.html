@@ -11,54 +11,65 @@
 
 
 
-{% if event_name %}
-<div class="bg-white shadow-lg rounded-xl p-4 border border-gray-200">
-    <div class="text-sm text-gray-500 mb-2">選択したイベント</div>
 
-    <div class="text-xl font-semibold text-green-600">
+
+<div class="mb-4">
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+    <div class="text-2_8rem text-gray-500 mb-4">選択したイベント</div>
+    <div class="text-2_8rem font-semibold text-blue-600 leading-snug">
       📅 {{ event_name }}
     </div>
   </div>
-{% endif %}
+</div>
 
-<h2 class="text-2xl my-6">② 日付を選択</h2>
+<h1>② 日にちを選択してください</h1>
 
 <form method="post">
   {% csrf_token %}
   <input type="hidden" name="selected_date" id="selected_date">
 
+  <div class="calendar-wrapper-full">
+    <div class="calendar-header">
+      <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+    </div>
+  
+
   <div class="calendar">
     {% for day in calendar_days %}
       <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
-        {{ day|date:"m/d (D)" }}
+          <div class="date-label">{{ day|date:"m/d" }}</div>
 
         {% for ev in events_by_day|get_item:day %}
-          <div class="bg-gray-200 text-sm my-1">📅 {{ ev.name }}</div>
+          <div class="event-item">📅 {{ ev.name }}</div>
         {% endfor %}
 
         {% for lesson in lessons_by_day|get_item:day %}
-          <div class="bg-yellow-100 text-sm my-1">
-            授業 {{ lesson.subject.name }} / {{ lesson.course.name }} {{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}
-          </div>
-        {% endfor %}
+        <div class="lesson-item">🎓 {{ lesson.subject.name }} / {{ lesson.course.name }}</div>
+      {% endfor %}
+
 
         {% for hw in homeworks_by_day|get_item:day %}
-          <div class="homework-box text-xs my-1">
-            📝 {{ hw.detail.homework.get_subject_display }} / {{ hw.detail.get_course_display }}<br>
-            📋 {{ hw.task }}
-          </div>
-        {% endfor %}
+        <div class="homework-box">
+          {{ hw.detail.homework.get_subject_display }}<br>
+          🏫 {{ hw.detail.get_course_display }} / {{ hw.detail.get_problem_type_display }}<br>
+          📋 {{ hw.task }}
+        </div>
+      {% endfor %}
       </div>
+
       {% if forloop.counter|divisibleby:7 and not forloop.last %}
         </div><div class="calendar">
       {% endif %}
     {% endfor %}
   </div>
+</div>
 
-  <button type="submit" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl">
-    次へ進む
-  </button>
-</form>
+    <div class="text-center mt-5xl mb-10xl">
+        <button type="submit" class="next-button">次へ進む</button>
+    </div>
+  
+  </form>
+
 
 <script>
 const days = document.querySelectorAll('.day');

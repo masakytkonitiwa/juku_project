@@ -297,7 +297,7 @@ button:active {
 /* ========== 見出し ========== */
 
 
-h1, h2 {
+h1 {
     text-align: center;
     font-weight: bold;
     margin-top: 2.8rem;      /* 上の余白を追加 */
@@ -305,7 +305,13 @@ h1, h2 {
     font-size: 2.8rem;
 }
 
-
+h2 {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 2.0rem;      /* 上の余白を追加 */
+    margin-bottom: 2.0rem; /* 下の余白（既存） */
+    font-size: 2.0rem;
+}
 
 /* ========== レスポンシブ対応 ========== */
 @media (max-width: 500px) {
@@ -406,6 +412,10 @@ img, table {
     text-align: center;
 }
 
+.mb-5xl {
+    margin-bottom: 5rem;
+  }
+  
 .mb-6xl {
     margin-bottom: 6rem;
   }

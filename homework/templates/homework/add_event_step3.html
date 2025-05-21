@@ -7,18 +7,34 @@
   <div class="step current">3</div>
 </div>
 
-<h2 class="text-2xl my-6">③ 内容確認と登録</h2>
+<h1>③ 内容確認と登録</h1>
 
-<div class="bg-gray-100 p-4 rounded-xl mb-6 text-xl">
-  📅 イベント名：<strong>{{ event_name }}</strong><br>
-  📆 日付：<strong>{{ event_date }}</strong>
+<div class="mb-4"></div>
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+    <div class="text-2_8rem text-gray-500 mb-4">選択した日付</div>
+    <div class="text-2_8rem font-semibold text-blue-600 leading-snug">
+      📅 {{ event_name }}
+    </div>
+  </div>
 </div>
+
+<div class="mb-4"></div>
+  <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+    <div class="text-2_8rem text-gray-500 mb-4">選択したイベント</div>
+    <div class="text-2_8rem font-semibold text-blue-600 leading-snug">
+      📅 {{ event_date }}
+    </div>
+  </div>
+</div>
+
+
 
 <form method="post">
   {% csrf_token %}
-  <button type="submit" class="bg-green-600 hover:bg-green-800 text-white font-bold py-3 px-6 rounded-xl">
-    ✅ 登録する
-  </button>
+  <div class="text-center mt-5xl mb-10xl">
+    <button type="submit" class="next-button"> 登録する</button>
+</div>
+
 </form>
 
 {% endblock %}

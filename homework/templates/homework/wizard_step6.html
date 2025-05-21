@@ -94,7 +94,9 @@
           {% endfor %}
   
           {% for hw_entry in homeworks_by_day|get_item:day %}
-          <div class="bg-blue-100 text-sm">
+          <div class="homework-box">
+            {{ hw_entry.detail.homework.get_subject_display }}<br>
+            🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}<br>
             📋 {{ hw_entry.task }}
           </div>
         {% endfor %}
@@ -105,21 +107,25 @@
       {% endif %}
     {% endfor %}
   </div>
+</div>
 
-
-  <div class="text-center mt-5xl mb-10xl">
+  <div class="text-center mt-5xl mb-5xl">
     <button type="submit" class="next-button">次へ進む</button>
 </div>
 
 
 </form>
 
+
+
+
 <!-- 戻るボタン -->
-<div class="mt-10 text-center">
-  <a href="{% url 'homework_wizard_step5' %}" class="bg-green-400 hover:bg-green-600 text-white text-3xl font-bold py-4 px-8 rounded-xl shadow-lg inline-block">
+<div class="text-center mt-5xl mb-10xl">
+  <a href="{% url 'homework_wizard_step5' %}" class="back-button">
     ← 戻る
   </a>
 </div>
+
 
 <script>
   const days = document.querySelectorAll('.day');

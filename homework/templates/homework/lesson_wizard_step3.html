@@ -1,12 +1,18 @@
+{% extends 'homework/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>授業登録 - ステップ③</title>
-    <link rel="stylesheet" href="{% static 'homework/style.css' %}">
-</head>
-<body>
+{% load homework_extras %}
+
+{% block title %}授業登録 Step 2{% endblock %}
+
+{% block content %}
+
+<!-- ステップバー -->
+<div class="arrow-steps">
+    <div class="step done">1</div>
+    <div class="step current">2</div>
+    <div class="step">3</div>
+</div>
+
     <h1>授業登録ステップ③：確認</h1>
 
     <p>以下の内容で登録します。よろしければ「登録する」を押してください。</p>
@@ -26,7 +32,6 @@
 
     <form method="post">
         {% csrf_token %}
-        <button type="submit">✅ 登録する</button>
+        <button type="submit" class="next-button">✅ 登録する</button>
     </form>
-</body>
-</html>
+ {% endblock %}

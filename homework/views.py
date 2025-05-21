@@ -1150,7 +1150,8 @@ def homework_wizard_step7(request):
             'date': date,
             'task': task,
             'subject': subject_name,
-            'course': course_name
+            'course': course_name,
+            'problem_type': problem_type_name,  # ← 追加！！
         }
         for date, task in raw_tasks
     ]
