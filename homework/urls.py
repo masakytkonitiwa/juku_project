@@ -83,6 +83,7 @@ urlpatterns = [
     path('lesson/wizard/step2/', views.lesson_wizard_step2, name='lesson_wizard_step2'),
     path('lesson/wizard/step3/', views.lesson_wizard_step3, name='lesson_wizard_step3'),
 
+    path('homework/delete_line/<int:detail_id>/<str:date_str>/', views.delete_homework_line, name='delete_homework_line'),
 
 ]
 

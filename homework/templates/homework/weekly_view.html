@@ -4,12 +4,31 @@
 {% block content %}
 
 
+<!-- 🔽 週移動ナビゲーション -->
+<!-- 📆 週送りナビゲーション -->
+<div class="flex justify-between items-center my-8">
+  <form method="get" action="{% url 'weekly_view' %}">
+    <input type="hidden" name="base_date" value="{{ prev_week_date }}">
+    <input type="hidden" name="view_mode" value="{{ view_mode }}">
+    <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded text-3xl">← 前の週</button>
+  </form>
+  <form method="get" action="{% url 'weekly_view' %}">
+    <input type="hidden" name="base_date" value="{{ today|date:'Y-m-d' }}">
+    <input type="hidden" name="view_mode" value="{{ view_mode }}">
+    <button class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded text-3xl">📅 今日へ</button>
+  </form>
+  <form method="get" action="{% url 'weekly_view' %}">
+    <input type="hidden" name="base_date" value="{{ next_week_date }}">
+    <input type="hidden" name="view_mode" value="{{ view_mode }}">
+    <button class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded text-3xl">次の週 →</button>
+  </form>
+</div>
 
 
 {% if view_mode == "div" %}
 <!-- 📱 スマホ用 縦表示 -->
 <!-- 🔼 上部余白を追加 -->
-<div class="mt-40"></div>
+<div class="mt-20"></div>
 <div class="flex flex-col gap-4">
   {% for day in week_days %}
   <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
@@ -35,9 +54,10 @@
       📅 {{ ev.name }}
   
 
-      <form method="post" action="{% url 'delete_event' ev.id %}">
+      <form method="post" action="{% url 'delete_event' ev.id %}"  onsubmit="return confirm('このイベントを削除しますか？');">
+        
         {% csrf_token %}
-        <button type="submit" class="text-red-500 text-5xl ml-1">
+        <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-3xl px-4 py-3 rounded">
           ❌
         </button>
       </form>
@@ -47,10 +67,22 @@
 
     <!-- 📘 授業 -->
     {% for lesson in lessons_by_day|get_item:day %}
-    <div class="bg-orange-100 rounded px-2 py-1 mb-1 text-5xl">
+    <div class="rounded px-2 py-2 mb-2 text-5xl {{ lesson.subject.name|subject_color_class }}">
+
       授業📘 {{ lesson.subject.name }} / {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
 
-    </div>
+
+    <form method="post" action="{% url 'delete_lesson' lesson.id %}" onsubmit="return confirm('この授業を削除しますか？');">
+      {% csrf_token %}
+      <button type="submit" 
+      style="width: 50%;"
+      class="bg-red-500 hover:bg-red-600 text-white text-3xl px-6 py-2 rounded mt-10 mb-4">
+        ❌この授業を削除
+      </button>
+    </form>
+  </div>
+
+
     {% endfor %}
 
     <!-- 📋 宿題 -->
@@ -59,13 +91,25 @@
       📚 {{ hw_entry.detail.homework.get_subject_display }}<br>
       🏫 {{ hw_entry.detail.get_course_display }}<br>
       📋 {{ hw_entry.task }}
+      
+  <!-- 🔽 横並びにするボタンコンテナ -->
+  <div class="flex flex-wrap gap-4 mt-4">
+    <!-- 全体削除 -->
+    <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" onsubmit="return confirm('この宿題（全日分）を削除しますか？');">
+      {% csrf_token %}
+      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-3xl px-6 py-2 rounded mb-4">
+        ❌ この宿題（全日分）を削除
+      </button>
+    </form>
 
-      <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}">
-        {% csrf_token %}
-        <button type="submit" class="text-red-500 text-5xl ml-1">
-          ❌
-        </button>
-      </form>
+    <!-- 当日だけ削除 -->
+    <form method="post" action="{% url 'delete_homework_line' hw_entry.detail.id day|date:'Y-m-d' %}" onsubmit="return confirm('この日の宿題だけを削除しますか？');">
+      {% csrf_token %}
+      <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white text-3xl px-6 py-2 rounded">
+        🗓️ この日の宿題だけ削除
+      </button>
+    </form>
+  </div>
 
     </div>
     {% endfor %}

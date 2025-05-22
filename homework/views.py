@@ -164,59 +164,62 @@ def get_second_sunday(year, month):
 
 
 def weekly_view(request):
-    print("【Render実行中】使用中のDB設定:", connection.settings_dict)
     today = date.today()
     view_mode = request.GET.get('view_mode', 'div')
-    print("選択された表示形式:", view_mode)
 
-    # ✅ 初期化しておく（すべての view_mode で使えるように）
-    week_days = []
+    # 🔽 GETから基準日を取得（全モード共通で使う）
+    base_date_str = request.GET.get('base_date')
+    if base_date_str:
+        try:
+            base_date = datetime.strptime(base_date_str, "%Y-%m-%d").date()
+        except ValueError:
+            base_date = today
+    else:
+        base_date = today
 
-    # ✅ 表示範囲を決定
+    # 📆 表示範囲の計算
     if view_mode == '3weeks':
-        week_start = today - timedelta(days=today.weekday())
+        week_start = base_date - timedelta(days=base_date.weekday())
         start_date = week_start - timedelta(weeks=1)
         end_date = start_date + timedelta(days=20)
         week_days = [start_date + timedelta(days=i) for i in range(21)]
 
     elif view_mode == 'month':
-        start_date = today.replace(day=1)
+        start_date = base_date.replace(day=1)
         if start_date.weekday() != 0:
             start_date -= timedelta(days=start_date.weekday())
-        next_month = (today.month % 12) + 1
-        next_month_year = today.year + (today.month // 12)
+        next_month = (start_date.month % 12) + 1
+        next_month_year = start_date.year + (start_date.month // 12)
         end_date = date(next_month_year, next_month, 1) - timedelta(days=1)
         if end_date.weekday() != 6:
             end_date += timedelta(days=(6 - end_date.weekday()))
         week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
     elif view_mode == 'test':
-        year, month = today.year, today.month
+        year, month = base_date.year, base_date.month
         second_sunday = get_second_sunday(year, month)
-        if today > second_sunday:
+        if base_date > second_sunday:
             month += 1
             if month > 12:
                 month = 1
                 year += 1
             second_sunday = get_second_sunday(year, month)
-        start_date = today
-        if start_date.weekday() != 0:
-            start_date -= timedelta(days=start_date.weekday())
+        start_date = base_date - timedelta(days=base_date.weekday())
         end_date = second_sunday
         week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
 
     elif view_mode == 'div':
-        monday = timezone.localdate() - timedelta(days=timezone.localdate().weekday())
+        monday = base_date - timedelta(days=base_date.weekday())
         start_date = monday
         end_date = monday + timedelta(days=20)
         week_days = [start_date + timedelta(days=i) for i in range(21)]
 
     else:
-        start_date = today
-        end_date = today + timedelta(days=6)
+        start_date = base_date - timedelta(days=base_date.weekday())
+        end_date = start_date + timedelta(days=6)
         week_days = [start_date + timedelta(days=i) for i in range(7)]
 
-
+    # 以降（共通処理）はそのままでOK
 
 
     print("カレンダー表示範囲:", start_date, "〜", end_date)
@@ -258,6 +261,9 @@ def weekly_view(request):
         'homeworks_by_day': homeworks_by_day,
         'events_by_day': events_by_day,
         'today': today,
+        'base_date': base_date,  # 🔽 追加
+        'next_week_date': (base_date + timedelta(days=7)).strftime('%Y-%m-%d'),
+        'prev_week_date': (base_date - timedelta(days=7)).strftime('%Y-%m-%d'),
     }
 
     return render(request, 'homework/weekly_view.html', context)
@@ -505,7 +511,7 @@ def add_lesson_view(request):
 def delete_lesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, id=lesson_id)
     lesson.delete()
-    return redirect('add_lesson')
+    return redirect('weekly_view')
 
 
 @login_required
@@ -1402,3 +1408,25 @@ def lesson_wizard_step3(request):
         'end_time': end_time,
         'selected_dates': selected_dates,
     })
+
+from datetime import datetime
+
+def delete_homework_line(request, detail_id, date_str):
+    detail = get_object_or_404(HomeworkDetail, id=detail_id)
+
+    # 日付をdatetime.dateに変換
+    try:
+        target_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+    except ValueError:
+        return redirect('weekly_view')  # 不正な日付なら何もしない
+
+    if detail.scheduled_task:
+        lines = detail.scheduled_task.splitlines()
+        new_lines = [
+            line for line in lines
+            if not line.startswith(date_str)
+        ]
+        detail.scheduled_task = "\n".join(new_lines)
+        detail.save()
+
+    return redirect('weekly_view')

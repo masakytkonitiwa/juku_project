@@ -508,3 +508,21 @@ font-size: 2.8rem !important;
     margin-top: 20px;
 }
 
+.subject-math {
+    background-color: #cce5ff; /* 水色 */
+}
+.subject-japanese {
+    background-color: #ffcccc; /* ピンク */
+}
+.subject-science {
+    background-color: #d4edda; /* 緑 */
+}
+.subject-social {
+    background-color: #fff3cd; /* 黄色 */
+}
+.subject-english {
+    background-color: #e2d6f3; /* 紫 */
+}
+.subject-other {
+    background-color: #eeeeee; /* グレー */
+}
