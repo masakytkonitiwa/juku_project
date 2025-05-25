@@ -201,7 +201,7 @@ def weekly_view(request):
         # スマホ表示：1週間
         start_date = base_date - timedelta(days=base_date.weekday())  # 月曜
         end_date = start_date + timedelta(days=6)
-        week_days = [start_date + timedelta(days=i) for i in range(7)]
+        week_days = [start_date + timedelta(days=i) for i in range(21)]
     else:
         # PC表示：5週間（35日）※1週前から始めて5週分
         start_date = base_date - timedelta(days=base_date.weekday()) - timedelta(weeks=1)
