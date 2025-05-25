@@ -125,7 +125,43 @@ button:active {
 .next-button:hover {
     background-color: #430f6d;
 }
-
+/* ========== topカレンダー ========== */
+/* calendar.css */
+.calendar-page {
+    font-family: sans-serif;
+    max-width: 1000px;
+    margin: auto;
+  }
+  
+  .calendar-page .calendar-table {
+    border-collapse: collapse;
+    table-layout: fixed;
+    font-size: 13px;
+  }
+  
+  .calendar-page th,
+  .calendar-page td {
+    border: 1px solid #ccc;
+    padding: 6px;
+    vertical-align: top;
+  }
+  
+  .calendar-page .calendar-event {
+    color: #1e40af;
+  }
+  
+  .calendar-page .calendar-lesson {
+    background-color: #fff7cc;
+  }
+  
+  .calendar-page .calendar-homework {
+    background-color: #e9fbe9;
+    border: 1px solid #b5e7b5;
+  }
+  
+  .calendar-page .today {
+    background-color: #d0f0c0;
+  }
 /* ========== カレンダー ========== */
 .calendar-wrapper-full {
     width: 100vw;  /* 画面の横幅いっぱい */
@@ -378,6 +414,8 @@ h2 {
 img, table {
     max-width: 100%;
     height: auto;
+    border-collapse: collapse;
+    border: 2px solid #ccc;
 }
 
 

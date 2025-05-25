@@ -36,3 +36,16 @@ def subject_color_class(subject_name):
         return "subject-english"
     else:
         return "subject-other"
+    
+@register.filter
+def weekday_ja(eng_day):
+    mapping = {
+        "Mon": "月",
+        "Tue": "火",
+        "Wed": "水",
+        "Thu": "木",
+        "Fri": "金",
+        "Sat": "土",
+        "Sun": "日",
+    }
+    return mapping.get(eng_day, eng_day)

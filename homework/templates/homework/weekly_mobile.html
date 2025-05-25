@@ -241,20 +241,13 @@
 
   <!-- 🔽 メニュー -->
   <div id="view-menu" class="hidden mt-3 space-y-4">
-    <form method="get" action="{% url 'weekly_view' %}">
-      <input type="hidden" name="view_mode" value="div">
-      <button type="submit"
-              style="font-size: 5rem;"
-              class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-6xl font-bold px-6 py-4 rounded-lg shadow">
-        📱 スマホ用縦表示
-      </button>
-    </form>
+
     <form method="get" action="{% url 'weekly_view' %}">
       <input type="hidden" name="view_mode" value="5weeks">
       <button type="submit"
               style="font-size: 5rem;"
               class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-9xl font-bold px-6 py-4 rounded-lg shadow">
-        📅 5週間
+        📅 PC用5週表示
       </button>
     </form>
 

@@ -163,11 +163,30 @@ def get_second_sunday(year, month):
     return sundays[1] if len(sundays) > 1 else sundays[0]
 
 
+from datetime import datetime, timedelta, date
+from collections import defaultdict
+from django.shortcuts import render
+from .models import Lesson, HomeworkDetail, Event
+
+
+from datetime import datetime, timedelta, date
+from collections import defaultdict
+from django.shortcuts import render
+from .models import Lesson, HomeworkDetail, Event
+
+
 def weekly_view(request):
     today = date.today()
-    view_mode = request.GET.get('view_mode', 'div')
 
-    # 🔽 GETから基準日を取得（全モード共通で使う）
+    # 🔽 表示モード取得：GET > セッション > デフォルト（スマホ用）
+    view_mode = request.GET.get('view_mode')
+    if not view_mode:
+        view_mode = request.session.get('preferred_view_mode', 'div')  # fallback to session or 'div'
+
+    # 🔄 選択されたモードをセッションに保存（将来のアクセスで維持）
+    request.session['preferred_view_mode'] = view_mode
+
+    # 🔽 基準日取得
     base_date_str = request.GET.get('base_date')
     if base_date_str:
         try:
@@ -177,63 +196,28 @@ def weekly_view(request):
     else:
         base_date = today
 
-    # 📆 表示範囲の計算
-    if view_mode == '3weeks':
-        week_start = base_date - timedelta(days=base_date.weekday())
-        start_date = week_start - timedelta(weeks=1)
-        end_date = start_date + timedelta(days=20)
-        week_days = [start_date + timedelta(days=i) for i in range(21)]
-
-    elif view_mode == 'month':
-        start_date = base_date.replace(day=1)
-        if start_date.weekday() != 0:
-            start_date -= timedelta(days=start_date.weekday())
-        next_month = (start_date.month % 12) + 1
-        next_month_year = start_date.year + (start_date.month // 12)
-        end_date = date(next_month_year, next_month, 1) - timedelta(days=1)
-        if end_date.weekday() != 6:
-            end_date += timedelta(days=(6 - end_date.weekday()))
-        week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
-
-    elif view_mode == 'test':
-        year, month = base_date.year, base_date.month
-        second_sunday = get_second_sunday(year, month)
-        if base_date > second_sunday:
-            month += 1
-            if month > 12:
-                month = 1
-                year += 1
-            second_sunday = get_second_sunday(year, month)
-        start_date = base_date - timedelta(days=base_date.weekday())
-        end_date = second_sunday
-        week_days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
-
-    elif view_mode == 'div':
-        monday = base_date - timedelta(days=base_date.weekday())
-        start_date = monday
-        end_date = monday + timedelta(days=20)
-        week_days = [start_date + timedelta(days=i) for i in range(21)]
-
-    else:
-        start_date = base_date - timedelta(days=base_date.weekday())
+    # 📆 表示期間の決定
+    if view_mode == 'div':
+        # スマホ表示：1週間
+        start_date = base_date - timedelta(days=base_date.weekday())  # 月曜
         end_date = start_date + timedelta(days=6)
         week_days = [start_date + timedelta(days=i) for i in range(7)]
+    else:
+        # PC表示：5週間（35日）※1週前から始めて5週分
+        start_date = base_date - timedelta(days=base_date.weekday()) - timedelta(weeks=1)
+        end_date = start_date + timedelta(days=34)
+        week_days = [start_date + timedelta(days=i) for i in range(35)]
 
-    # 以降（共通処理）はそのままでOK
-
-
-    print("カレンダー表示範囲:", start_date, "〜", end_date)
-
-    # 📅 共通の週・日付リスト
+    # 📅 週単位の分割（PCの表形式で使用）
     days = [start_date + timedelta(days=i) for i in range((end_date - start_date).days + 1)]
-    weeks = [days[i:i+7] for i in range(0, len(days), 7)]
+    weeks = [days[i:i + 7] for i in range(0, len(days), 7)]
 
-    # 授業データ
+    # 📘 授業データ
     lessons_by_day = defaultdict(list)
     for lesson in Lesson.objects.filter(date__range=(start_date, end_date)):
         lessons_by_day[lesson.date].append(lesson)
 
-    # 宿題データ
+    # 📋 宿題データ
     homeworks_by_day = defaultdict(list)
     for detail in HomeworkDetail.objects.all():
         if detail.scheduled_task:
@@ -247,27 +231,34 @@ def weekly_view(request):
                     except ValueError:
                         continue
 
-    # イベントデータ
+    # 📅 イベントデータ
     events_by_day = defaultdict(list)
     for ev in Event.objects.filter(date__range=(start_date, end_date)):
         events_by_day[ev.date].append(ev)
 
-    # 🔚 コンテキストに渡す
+    # ⏩ ナビゲーション用日付（スマホ＆PC）
     context = {
-        'weeks': weeks,
-        'week_days': week_days,
+        'today': today,
+        'base_date': base_date,
         'view_mode': view_mode,
+        'week_days': week_days,
+        'weeks': weeks,
         'lessons_by_day': lessons_by_day,
         'homeworks_by_day': homeworks_by_day,
         'events_by_day': events_by_day,
-        'today': today,
-        'base_date': base_date,  # 🔽 追加
-        'next_week_date': (base_date + timedelta(days=7)).strftime('%Y-%m-%d'),
         'prev_week_date': (base_date - timedelta(days=7)).strftime('%Y-%m-%d'),
+        'next_week_date': (base_date + timedelta(days=7)).strftime('%Y-%m-%d'),
+        'prev_4week_date': (base_date - timedelta(days=28)).strftime('%Y-%m-%d'),
+        'next_4week_date': (base_date + timedelta(days=28)).strftime('%Y-%m-%d'),
     }
 
-    return render(request, 'homework/weekly_view.html', context)
+    # 📄 テンプレート切り替え
+    if view_mode == 'div':
+        template_name = 'homework/weekly_mobile.html'
+    else:
+        template_name = 'homework/weekly_pc_table.html'
 
+    return render(request, template_name, context)
 
 
 
