@@ -134,7 +134,9 @@
 
 
 {% if view_mode != 'div' %}<!-- 📆 週送りナビゲーション -->
-<div class="flex justify-between items-center mb-4">
+
+
+<div class="flex justify-center items-center mb-4 mt-20">
 
     <div class="flex gap-2">
         <form method="get" action="{% url 'weekly_view' %}">
@@ -244,41 +246,47 @@
 
 
 <!-- 📌 フローティング「＋」＋ メニュー -->
-<div id="fab-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-3 group">
-    <!-- ホバーでメニュー表示 -->
-    <div id="fab-menu" class="hidden group-hover:flex flex-col items-end space-y-2">
-      <a href="{% url 'homework_wizard_step1' %}" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow text-base">
+<div id="fab-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end space-y-3">
+    <!-- メニュー（ホバー時表示） -->
+    <div id="fab-menu" class="hidden flex flex-col items-end space-y-4">
+      <a href="{% url 'homework_wizard_step1' %}"
+         class="bg-green-500 hover:bg-green-600 text-white text-6xl font-bold px-6 py-4 rounded-xl shadow-lg">
         ➕ 宿題を追加
       </a>
-      <a href="{% url 'add_event_step1' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow text-base">
+      <a href="{% url 'add_event_step1' %}" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded shadow text-6xl">
         🗓️ イベント
       </a>
-      <a href="{% url 'lesson_wizard_step1' %}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow text-base">
+      <a href="{% url 'lesson_wizard_step1' %}" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded shadow text-6xl">
         📚 授業
       </a>
     </div>
   
-    <!-- 本体 -->
-    <button class="w-12 h-12 rounded-full bg-blue-500 text-white text-3xl flex items-center justify-center shadow hover:bg-blue-600">
-      ＋
-    </button>
-  </div>
+  <!-- ＋ボタン -->
+  <button
+    class="w-36 h-36 rounded-full bg-blue-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-blue-600">
+    ＋
+  </button>
+</div>
+
   
 
 
 
 <!-- 📅 表示切替 FAB -->
 <div id="view-menu-container" class="fixed top-6 left-6 z-50 group">
-    <!-- ボタン -->
-    <button class="w-12 h-12 rounded-full bg-purple-500 text-white text-2xl flex items-center justify-center shadow hover:bg-purple-600">
-      ≡
-    </button>
+  <!-- ボタン本体 -->
+  <button
+    class="w-36 h-36 rounded-full bg-purple-500 text-white text-6xl shadow-lg flex items-center justify-center hover:bg-purple-600">
+    ≡
+  </button>
   
     <!-- メニュー（ホバーで表示） -->
     <div id="view-menu" class="hidden group-hover:block mt-2 space-y-1">
       <form method="get" action="{% url 'weekly_view' %}">
         <input type="hidden" name="view_mode" value="div">
-        <button class="block w-36 bg-blue-500 hover:bg-blue-600 text-white text-sm px-4 py-2 rounded shadow">
+        <button type="submit"
+        style="font-size: 5rem;"
+        class="block w-full bg-blue-500 hover:bg-blue-600 text-white text-9xl font-bold px-6 py-4 rounded-lg shadow">
           📱 スマホ用縦表示
         </button>
       </form>
