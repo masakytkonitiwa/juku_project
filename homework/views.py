@@ -167,7 +167,7 @@ from datetime import datetime, timedelta, date
 from collections import defaultdict
 from django.shortcuts import render
 from .models import Lesson, HomeworkDetail, Event
-
+from urllib.parse import urlencode
 
 from datetime import datetime, timedelta, date
 from collections import defaultdict
@@ -414,12 +414,25 @@ def summary_view(request):
 def delete_homework(request, homework_id):
     homework = get_object_or_404(Homework, id=homework_id)
     homework.delete()
-    return redirect('weekly_view')
+
+    # 🔁 base_dateとview_modeをGETから取得して再利用
+    base_date = request.GET.get('base_date')
+    view_mode = request.GET.get('view_mode')
+
+    query_string = ''
+    if base_date and view_mode:
+        query_string = f'?base_date={base_date}&view_mode={view_mode}'
+    return redirect(reverse('weekly_view') + query_string)
 
 def delete_event_view(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     event.delete()
-    return redirect('weekly_view')  # カレンダーに戻る
+
+    base_date = request.GET.get('base_date')
+    view_mode = request.GET.get('view_mode')
+
+    return redirect(reverse('weekly_view') + f'?base_date={base_date}&view_mode={view_mode}')
+
 
 from .forms import LessonForm
 
@@ -499,10 +512,17 @@ def add_lesson_view(request):
         'today': today,  # 🔥 追加！
     })
 
+
+
+
 def delete_lesson(request, lesson_id):
     lesson = get_object_or_404(Lesson, id=lesson_id)
     lesson.delete()
-    return redirect('weekly_view')
+
+    base_date = request.GET.get('base_date')
+    view_mode = request.GET.get('view_mode')
+
+    return redirect(reverse('weekly_view') + f'?base_date={base_date}&view_mode={view_mode}')
 
 
 @login_required

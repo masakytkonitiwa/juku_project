@@ -45,7 +45,7 @@
       📅 {{ ev.name }}
   
 
-      <form method="post" action="{% url 'delete_event' ev.id %}" 
+      <form method="post" action="{% url 'delete_event' ev.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" 
       class="mt-4 text-right"
       onsubmit="return confirm('このイベントを削除しますか？');">
         {% csrf_token %}
@@ -69,7 +69,7 @@
       授業📘 {{ lesson.subject.name }} / {{ lesson.course.name }}（{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }})
 
 
-    <form method="post" action="{% url 'delete_lesson' lesson.id %}" 
+    <form method="post" action="{% url 'delete_lesson' lesson.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" 
     class="mt-4 text-right"
     onsubmit="return confirm('この授業を削除しますか？');">
       {% csrf_token %}
@@ -95,15 +95,18 @@
   <!-- 🔽 横並びにするボタンコンテナ -->
   <div class="flex flex-wrap gap-4 mt-4">
     <!-- 全体削除 -->
-    <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" class="mt-4 text-right" onsubmit="return confirm('この宿題（全日分）を削除しますか？') >
-      {% csrf_token %}
-      <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-3xl px-6 py-2 rounded mb-4">
-        ❌ この宿題（全日分）を削除
-      </button>
+    <form method="post"
+    action="{% url 'delete_homework' hw_entry.detail.homework.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}"
+    class="mt-4 text-right"
+    onsubmit="return confirm('この宿題（全日分）を削除しますか？')">
+    {% csrf_token %}
+    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white text-3xl px-6 py-2 rounded mb-4">
+      ❌ この宿題（全日分）を削除
+    </button>
     </form>
 
     <!-- 当日だけ削除 -->
-    <form method="post" action="{% url 'delete_homework_line' hw_entry.detail.id day|date:'Y-m-d' %}" class="mt-4 text-right" onsubmit="return confirm('この日の宿題だけを削除しますか？');">
+    <form method="post" action="{% url 'delete_homework_line' hw_entry.detail.id day|date:'Y-m-d' %} ?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" class="mt-4 text-right" onsubmit="return confirm('この日の宿題だけを削除しますか？');">
       {% csrf_token %}
       <button type="submit" class="bg-gray-500 hover:bg-gray-600 text-white text-3xl px-6 py-2 rounded">
         🗓️ この日の宿題だけ削除
@@ -141,7 +144,7 @@
     <div class="flex gap-2">
         <form method="get" action="{% url 'weekly_view' %}">
           <input type="hidden" name="base_date" value="{{ prev_4week_date }}">
-          <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">← 前の４週</button>
+          <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">← 前</button>
         </form>
         <form method="get" action="{% url 'weekly_view' %}">
           <input type="hidden" name="base_date" value="{{ today|date:'Y-m-d' }}">
@@ -149,7 +152,7 @@
         </form>
         <form method="get" action="{% url 'weekly_view' %}">
           <input type="hidden" name="base_date" value="{{ next_4week_date }}">
-          <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">次の４週 →</button>
+          <button class="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded">次 →</button>
         </form>
       </div>
   </div>
@@ -195,7 +198,7 @@
 
               <div class="bg-yellow-100 border border-yellow-300 text-sm text-gray-800 rounded px-2 py-1 mb-1 shadow">
                 📅 {{ ev.name }}
-                <a href="{% url 'delete_event' ev.id %}" class="text-red-500 ml-2">❌</a>
+                <a href="{% url 'delete_event' ev.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" class="text-red-500 ml-2">❌</a>
               </div>
             {% endfor %}
           
@@ -207,7 +210,7 @@
               <div class="bg-blue-50 border border-blue-300 text-sm rounded px-2 py-1 mb-1 shadow">
                 <div class="font-bold">{{ lesson.subject.name }} / {{ lesson.course.name }}</div>
                 <div>{{ lesson.start_time|time:"H:i" }}〜{{ lesson.end_time|time:"H:i" }}</div>
-                <a href="{% url 'delete_lesson' lesson.id %}" class="text-red-500 ml-2">❌</a>
+                <a href="{% url 'delete_lesson' lesson.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" class="text-red-500 ml-2">❌</a>
               </div>
             {% endfor %}
           
@@ -220,7 +223,7 @@
                 <div class="font-bold">{{ hw_entry.detail.homework.get_subject_display }}</div>
                 <div>🏫 {{ hw_entry.detail.get_course_display }} / {{ hw_entry.detail.get_problem_type_display }}</div>
                 <div class="text-xs">📋 {{ hw_entry.task }}</div>
-                <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}" class="inline">
+                <form method="post" action="{% url 'delete_homework' hw_entry.detail.homework.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}" class="inline">
                   {% csrf_token %}
                   <button type="submit" style="all: unset; cursor: pointer;" class="text-red-500 text-xs ml-2">❌</button>
                 </form>
