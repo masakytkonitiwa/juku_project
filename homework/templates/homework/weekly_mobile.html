@@ -33,8 +33,13 @@
 <div class="mt-5"></div>
 <div class="flex flex-col gap-4">
   {% for day in week_days %}
-  <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
-    
+
+    <div
+    class="bg-white rounded-xl shadow p-4 border cursor-pointer transition-all duration-150
+           hover:bg-blue-50 hover:shadow-lg hover:scale-[1.01]
+           {% if day == today %} ring-2 ring-blue-400 {% endif %}"
+    onclick="showScheduleModal('{{ day|date:'Y-m-d' }}')"
+  > 
     <!-- 🎨 日付 -->
     <div onclick="showScheduleModal('{{ day|date:'Y-m-d' }}')"
       class="text-5xl font-bold mb-2 cursor-pointer
