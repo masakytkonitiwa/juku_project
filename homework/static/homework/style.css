@@ -575,3 +575,11 @@ font-size: 2.8rem !important;
     padding-left: 0.5rem;
     color: #374151; /* Gray-800 */
   }
+
+  safelist: [
+  'hover:bg-blue-100',
+  'hover:scale-105',
+  'hover:shadow-lg',
+  'transition-all',
+  'duration-150'
+],
