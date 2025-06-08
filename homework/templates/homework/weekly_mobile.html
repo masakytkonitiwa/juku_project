@@ -55,7 +55,7 @@
     <div class="bg-yellow-100 rounded px-2 py-1 mb-1 text-5xl">
       📅 {{ ev.name }}
   
-      <form method="post" action="{% url 'delete_event' ev.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}">
+      <form method="post" action="{% url 'delete_event' ev.id %}?base_date={{ base_date|date:'Y-m-d' }}&view_mode={{ view_mode }}"
             class="mt-4 text-right"
             onsubmit="return confirm('このイベントを削除しますか？');">
         {% csrf_token %}
