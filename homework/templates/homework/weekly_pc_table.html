@@ -50,6 +50,7 @@
             <tr class="bg-gray-100 text-center text-base font-bold">
               {% for day in weeks.0 %}
                 <th class="border px-2 py-2
+                    sticky top-0 z-10 bg-white
                     {% if day == today %} bg-green-100 ring-2 ring-green-400 font-bold {% endif %}
                     {% if day|date:'w' == '0' %}  bg-blue-50 
                     {% elif day|date:'w' == '6' %} bg-red-50 

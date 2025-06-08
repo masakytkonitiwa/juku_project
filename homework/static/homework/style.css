@@ -583,3 +583,14 @@ font-size: 2.8rem !important;
   'transition-all',
   'duration-150'
 ],
+
+.calendar-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    position: sticky;
+    top: 0;
+    background-color: white;  /* 背景色を明示しないと下の要素と重なる時に透ける */
+    z-index: 10;  /* 上に出すための重なり順 */
+    border-bottom: 1px solid #ccc;
+    padding: 0.5rem 0;
+  }
