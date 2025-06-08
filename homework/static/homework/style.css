@@ -564,3 +564,14 @@ font-size: 2.8rem !important;
 .subject-other {
     background-color: #eeeeee; /* グレー */
 }
+
+
+.modal-section-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    border-left: 4px solid #4b5563; /* Gray-700 */
+    padding-left: 0.5rem;
+    color: #374151; /* Gray-800 */
+  }

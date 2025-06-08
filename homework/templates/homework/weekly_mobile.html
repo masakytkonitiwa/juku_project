@@ -36,18 +36,19 @@
   <div class="bg-white rounded-xl shadow p-4 border {% if day == today %}ring-2 ring-blue-400{% endif %}">
     
     <!-- 🎨 日付 -->
-    <div class="text-5xl font-bold mb-2
-        {% if day == today %}
-            text-blue-800
-        {% elif day|date:'w' == '6' %}
-            text-red-600
-        {% elif day|date:'w' == '0' %}
-            text-blue-600
-        {% else %}
-            text-gray-700
-        {% endif %}
+    <div onclick="showScheduleModal('{{ day|date:'Y-m-d' }}')"
+        class="text-5xl font-bold mb-2 cursor-pointer
+          {% if day == today %}
+              text-blue-800
+          {% elif day|date:'w' == '6' %}
+              text-red-600
+          {% elif day|date:'w' == '0' %}
+              text-blue-600
+          {% else %}
+              text-gray-700
+          {% endif %}
     ">
-      {{ day|date:"m/d (D)" }}
+    {{ day|date:"m/d (D)" }}
     </div>
 
     <!-- 📅 イベント -->
@@ -126,6 +127,38 @@
 
     </div>
     {% endfor %}
+
+    <!-- 🔽 ここに追加 -->
+    <div class="hidden modal-raw" id="modal-raw-{{ day|date:'Y-m-d' }}">
+      <script type="application/json">
+        {
+          "events": [
+            {% for ev in events_by_day|get_item:day %}
+              { "name": "{{ ev.name }}" }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ],
+          "lessons": [
+            {% for lesson in lessons_by_day|get_item:day %}
+              {
+                "subject": "{{ lesson.subject.name }}",
+                "course": "{{ lesson.course.name }}",
+                "start_time": "{{ lesson.start_time|time:'H:i' }}",
+                "end_time": "{{ lesson.end_time|time:'H:i' }}"
+              }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ],
+          "homeworks": [
+            {% for hw in homeworks_by_day|get_item:day %}
+              {
+                "subject": "{{ hw.detail.homework.get_subject_display }}",
+                "course": "{{ hw.detail.get_course_display }}",
+                "task": "{{ hw.task }}"
+              }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }
+      </script>
+    </div>
 
   </div>
   {% endfor %}
@@ -316,7 +349,66 @@
       viewMenu.classList.add("hidden");
     });
   }
+
+
+  function showScheduleModal(dateStr) {
+  const contentDiv = document.getElementById('modal-content');
+  contentDiv.innerHTML = '';
+
+  const dateObj = new Date(dateStr);
+  const options = { month: 'numeric', day: 'numeric', weekday: 'short' };
+  const localeDate = dateObj.toLocaleDateString('ja-JP', options);
+  document.getElementById('modal-date').innerText = localeDate;
+
+  const rawEl = document.getElementById('modal-raw-' + dateStr);
+  if (!rawEl) {
+    contentDiv.innerHTML = '<p class="text-gray-500">予定はありません。</p>';
+    return;
+  }
+  const data = JSON.parse(rawEl.querySelector('script').textContent);
+
+  const createSection = (title, items, renderFunc) => {
+    if (!items || items.length === 0) return '';
+    return `
+      <div class="bg-gray-50 border-l-4 border-blue-300 px-4 py-3 rounded mb-6 shadow">
+        <h3 class="text-2xl font-bold mb-2">${title}</h3>
+        <ul class="list-disc ml-6 space-y-1 text-lg">
+          ${items.map(renderFunc).join('')}
+        </ul>
+      </div>
+    `;
+  };
+
+  const eventHTML = createSection("📅 イベント", data.events, ev => `<li>${ev.name}</li>`);
+  const lessonHTML = createSection("📘 授業", data.lessons, l =>
+    `<li>${l.subject} / ${l.course}（${l.start_time}〜${l.end_time}）</li>`
+  );
+  const homeworkHTML = createSection("📋 宿題", data.homeworks, hw =>
+    `<li>${hw.subject} / ${hw.course} / ${hw.task}</li>`
+  );
+
+  contentDiv.innerHTML = eventHTML + lessonHTML + homeworkHTML || '<p class="text-gray-500">予定はありません。</p>';
+  document.getElementById('schedule-modal').classList.remove('hidden');
+}
+
+function closeScheduleModal() {
+  document.getElementById('schedule-modal').classList.add('hidden');
+}
+
 </script>
 
+
+<!-- モーダル本体 -->
+<div id="schedule-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center">
+  <div class="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-3xl max-h-[80vh] overflow-y-auto">
+    <h2 id="modal-date" class="text-3xl font-bold mb-6 text-center text-gray-800"></h2>
+    <div id="modal-content" class="space-y-6 text-lg text-gray-800"></div>
+    <div class="text-center mt-8">
+      <button onclick="closeScheduleModal()" class="bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-700 text-xl shadow">
+        ✖️ 閉じる
+      </button>
+    </div>
+  </div>
+</div>
 
 {% endblock %}
