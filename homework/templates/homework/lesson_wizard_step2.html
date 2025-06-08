@@ -40,7 +40,7 @@
         <div class="calendar">
           {% for day in calendar_days %}
             <div class="day {% if day == today %}today{% endif %}" data-date="{{ day|date:'Y-m-d' }}">
-                <div class="date-label">{{ day|date:"m/d" }}</div>
+                <div class="date-label">{{ day|date:"m/d (D)" }}</div>
 
       
               {% for ev in events_by_day|get_item:day %}

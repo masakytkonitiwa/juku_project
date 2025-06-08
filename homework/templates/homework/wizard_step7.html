@@ -80,7 +80,7 @@
       {% for day in calendar_days %}
       {% with day_str=day|date:'Y-m-d' %}
           <div class="day {% if day in selected_dates %}selected{% endif %} {% if day == today %}today{% endif %}" data-date="{{ day_str }}">
-            <div class="date-label">{{ day|date:"m/d" }}</div>
+            <div class="date-label">{{ day|date:"m/d D" }}</div>
   
             <!-- イベント -->
             {% for ev in events_by_day|get_item:day %}
