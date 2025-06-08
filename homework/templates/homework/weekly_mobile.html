@@ -37,19 +37,21 @@
     
     <!-- 🎨 日付 -->
     <div onclick="showScheduleModal('{{ day|date:'Y-m-d' }}')"
-        class="text-5xl font-bold mb-2 cursor-pointer
-          {% if day == today %}
-              text-blue-800
-          {% elif day|date:'w' == '6' %}
-              text-red-600
-          {% elif day|date:'w' == '0' %}
-              text-blue-600
-          {% else %}
-              text-gray-700
-          {% endif %}
-    ">
-    {{ day|date:"m/d (D)" }}
-    </div>
+      class="text-5xl font-bold mb-2 cursor-pointer
+        {% if day == today %}
+            text-blue-800
+        {% elif day|date:'w' == '6' %}
+            text-red-600
+        {% elif day|date:'w' == '0' %}
+            text-blue-600
+        {% else %}
+            text-gray-700
+        {% endif %}
+        hover:bg-blue-100 hover:scale-105 hover:shadow-md transition-all duration-150 rounded"
+  >
+  {{ day|date:"m/d (D)" }}
+  </div>
+
 
     <!-- 📅 イベント -->
     {% for ev in events_by_day|get_item:day %}
