@@ -139,6 +139,7 @@
                       {
                         "subject": "{{ hw.detail.homework.get_subject_display }}",
                         "course": "{{ hw.detail.get_course_display }}",
+                        "type":"{{ hw_entry.detail.get_problem_type_display }}",
                         "task": "{{ hw.task }}"
                       }{% if not forloop.last %},{% endif %}
                     {% endfor %}
