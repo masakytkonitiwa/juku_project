@@ -395,6 +395,41 @@ function closeScheduleModal() {
   document.getElementById('schedule-modal').classList.add('hidden');
 }
 
+function printModalContent() {
+  const modal = document.getElementById('schedule-modal');
+  const content = modal.querySelector('#modal-content').innerHTML;
+  const date = document.getElementById('modal-date').innerText;
+
+  const printWindow = window.open('', '_blank');
+  printWindow.document.open();
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>${date} の予定</title>
+        <style>
+          body {
+            font-family: sans-serif;
+            padding: 2rem;
+          }
+          h1 {
+            text-align: center;
+            margin-bottom: 2rem;
+          }
+          ul {
+            margin-left: 1.5rem;
+          }
+        </style>
+      </head>
+      <body>
+        <h1>${date} の予定</h1>
+        ${content}
+      </body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
+}
+
 </script>
 
 
@@ -403,9 +438,12 @@ function closeScheduleModal() {
   <div class="bg-white rounded-xl shadow-lg p-6 w-[90%] max-w-3xl max-h-[80vh] overflow-y-auto">
     <h2 id="modal-date" class="text-3xl font-bold mb-6 text-center text-gray-800"></h2>
     <div id="modal-content" class="space-y-6 text-lg text-gray-800"></div>
-    <div class="text-center mt-8">
+    <div class="text-center mt-4 space-x-4">
       <button onclick="closeScheduleModal()" class="bg-gray-600 text-white px-6 py-3 rounded-full hover:bg-gray-700 text-xl shadow">
         ✖️ 閉じる
+      </button>
+      <button onclick="printModalContent()" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 text-xl shadow">
+        🖨️ 印刷
       </button>
     </div>
   </div>
