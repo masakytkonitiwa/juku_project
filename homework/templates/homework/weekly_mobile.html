@@ -163,7 +163,8 @@
               {
                 "subject": "{{ hw.detail.homework.get_subject_display }}",
                 "course": "{{ hw.detail.get_course_display }}",
-                "task": "{{ hw.task }}"
+                "task": "{{ hw.task }}",
+                "problem_type": "{{ hw.detail.get_problem_type_display }}"
               }{% if not forloop.last %},{% endif %}
             {% endfor %}
           ]
@@ -332,7 +333,7 @@
     `<li>${l.subject} / ${l.course}（${l.start_time}〜${l.end_time}）</li>`
   );
   const homeworkHTML = createSection("📋 宿題", data.homeworks, hw =>
-    `<li>${hw.subject} / ${hw.course} / ${hw.task}</li>`
+    `<li>${hw.subject} / ${hw.course} / ${hw.problem_type} /  ${hw.task}</li>`
   );
 
   contentDiv.innerHTML = eventHTML + lessonHTML + homeworkHTML || '<p class="text-gray-500">予定はありません。</p>';
